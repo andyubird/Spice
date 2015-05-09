@@ -70,7 +70,7 @@ namespace Spice
             }
             temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
             _mousePressed = true;
-            lines.Add(new CircuitElm(tool,temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
+            lines.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
             lines[lines.Count - 1].round(gridSize);
         }
 
@@ -135,7 +135,37 @@ namespace Spice
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            List<NodeElm> nodes = new List<NodeElm>();
 
+            foreach (CircuitElm item in lines){
+                if (!nodes.Exists(elm => elm.pt == item.pt1)) nodes.Add(new NodeElm(item.pt1));
+                if (!nodes.Exists(elm => elm.pt == item.pt2)) nodes.Add(new NodeElm(item.pt2));
+            }
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                foreach (NodeElm node in nodes)
+                {
+                    if (node.pt == lines[i].pt1) node.addtolist(i);
+                    if (node.pt == lines[i].pt2) node.addtolist(i);
+                }
+            }
+
+            textBox1.Text = "List of nodes:\r\n";
+
+            foreach (NodeElm node in nodes){
+                textBox1.Text += node.pt.ToString();
+                foreach (int a in node.connectedCircuit){
+                    textBox1.Text += " " + a.ToString();
+                }
+
+                textBox1.Text += System.Environment.NewLine;
+            }
+
+            foreach (CircuitElm item in lines)
+            {
+                textBox1.Text += item.getDump() + System.Environment.NewLine;
+            }
         }
     }
 }

@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="class\CircuitElm.cs" />
+    <Compile Include="class\NodeElm.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
