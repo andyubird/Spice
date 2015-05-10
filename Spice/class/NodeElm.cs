@@ -8,18 +8,22 @@ namespace Spice
 {
     class NodeElm
     {
-        public Point pt;
-
-        public List<int> connectedCircuit = new List<int>();
-
-        public NodeElm(Point x)
-        {
-            pt = x;
-        }
+        public List<int> connectedTerminals = new List<int>();
 
         public void addtolist(int a)
         {
-            connectedCircuit.Add(a);
+            connectedTerminals.Add(a);
+        }
+
+        public string getDump()
+        {
+            string dump = "";
+            foreach (int t in connectedTerminals)
+            {
+                dump += t.ToString() + " ";
+            }
+
+            return dump;
         }
     }
 }

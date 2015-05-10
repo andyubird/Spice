@@ -21,11 +21,11 @@ namespace Spice
             if (elm.type == 'r')
             {
                 TextBox r = new TextBox();
-                r.Text = elm.resistance.ToString();
+                r.Text = elm.characteristic.ToString();
                 Controls.Add(r);
 
                 r.TextChanged += delegate
-                { elm.resistance = Convert.ToInt32(r.Text); };
+                { elm.characteristic = Convert.ToInt32(r.Text); };
             }
         }
     }

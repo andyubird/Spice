@@ -150,45 +150,162 @@ namespace Spice
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            List<Terminal> terminals = new List<Terminal>();
             List<NodeElm> nodes = new List<NodeElm>();
 
-            foreach (CircuitElm item in lines){
-                if (!nodes.Exists(elm => elm.pt == item.pt1)) nodes.Add(new NodeElm(item.pt1));
-                if (!nodes.Exists(elm => elm.pt == item.pt2)) nodes.Add(new NodeElm(item.pt2));
+
+            //Create terminal list
+            foreach (CircuitElm item in lines)
+            {
+                if (!terminals.Exists(elm => elm.pt == item.pt1)) terminals.Add(new Terminal(item.pt1));
+                if (!terminals.Exists(elm => elm.pt == item.pt2)) terminals.Add(new Terminal(item.pt2));
             }
 
+            //Create connected circuit list inside each terminal
             for (int i = 0; i < lines.Count; i++)
             {
-                foreach (NodeElm node in nodes)
+                foreach (Terminal terminal in terminals)
                 {
-                    if (node.pt == lines[i].pt1) node.addtolist(i);
-                    if (node.pt == lines[i].pt2) node.addtolist(i);
+                    if (terminal.pt == lines[i].pt1) terminal.addtolist(i);
+                    if (terminal.pt == lines[i].pt2) terminal.addtolist(i);
                 }
             }
 
-            textBox1.Text = "List of nodes:\r\n";
+            //Add terminal numbers to each CircuitElm in lines
+            foreach (CircuitElm item in lines)
+            {
+                for (int i = 0; i < terminals.Count; i++)
+                {
+                    if (item.pt1 == terminals[i].pt) item.terminals[0] = i;
+                    if (item.pt2 == terminals[i].pt) item.terminals[1] = i;
+                }
+            }
 
-            foreach (NodeElm node in nodes){
-                textBox1.Text += node.pt.ToString();
-                foreach (int a in node.connectedCircuit){
+            //Create node list
+            for (int i = 0; i < terminals.Count; i++)
+            {
+                //Check if a terminal is already in a node
+                if (nodes.Exists(node => node.connectedTerminals.Exists(t => t == i))) continue;
+
+                //Create node and add all other connected teminals
+                nodes.Add(new NodeElm());
+                nodes.Last().addtolist(i);
+
+                bool finished = true;
+                do
+                {
+                    finished = true;
+                    for (int j = 0; j < nodes.Last().connectedTerminals.Count; j++)
+                    {
+                        for (int k = 0; k < lines.Count; k++)
+                        {
+                            if (lines[k].type == 'w' && lines[k].terminals.Contains(nodes.Last().connectedTerminals[j]))
+                            {
+                                int index = System.Array.IndexOf(lines[k].terminals, nodes.Last().connectedTerminals[j]);
+                                int otherTerminal = lines[k].terminals[(-1) * index + 1];
+                                if (!nodes.Last().connectedTerminals.Exists(t => t == otherTerminal))
+                                {
+                                    nodes.Last().addtolist(otherTerminal);
+                                    finished = false;
+                                }
+                            }
+                        }
+                    }
+                } while (!finished);
+
+            }
+
+
+
+
+
+
+
+
+
+
+            textBox1.Text = "List of terminals:\r\n";
+
+            foreach (Terminal terminal in terminals)
+            {
+                textBox1.Text += terminal.pt.ToString();
+                foreach (int a in terminal.connectedCircuits)
+                {
                     textBox1.Text += " " + a.ToString();
                 }
 
                 textBox1.Text += System.Environment.NewLine;
             }
 
-            foreach (CircuitElm item in lines)
-            {
-                for (int i = 0; i < nodes.Count; i++)
-                {
-                    if (item.pt1 == nodes[i].pt) item.connectedNodes[0] = i;
-                    if (item.pt2 == nodes[i].pt) item.connectedNodes[1] = i;
-                }
-            }
+            textBox1.Text += "\r\nList of elements:\r\n";
 
             foreach (CircuitElm item in lines)
             {
                 textBox1.Text += item.getDump() + System.Environment.NewLine;
+            }
+
+            textBox1.Text += "\r\nList of nodes:\r\n";
+
+            foreach (NodeElm node in nodes)
+            {
+                textBox1.Text += node.getDump() + System.Environment.NewLine;
+            }
+
+            //find ground terminal and obsolete ground terminal
+
+            int gt, ogt, gn = new int();
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].type == 'g')
+                {
+                    ogt = terminals.FindIndex(t => t.connectedCircuits.Contains(i) && t.connectedCircuits.Count == 1);
+                    gt = terminals.FindIndex(t => t.connectedCircuits.Contains(i) && t.connectedCircuits.Count != 1);
+                    gn = nodes.FindIndex(n => n.connectedTerminals.Contains(gt));
+                    textBox1.Text += "\r\nGround node:" + gn.ToString() + "\r\n";
+                }
+            }
+
+            //build matrix
+
+            float[,] matrix = new float[terminals.Count - 1, terminals.Count];
+
+            List<CircuitElm> devices = lines.FindAll(line => line.type != 'w' && line.type != 'g');
+            List<CircuitElm> links = lines.FindAll(line => line.type == 'w');
+
+            for (int i = 1; i < devices.Count; i++)
+            {
+                for (int j = 0; j < links.Count; j++)
+                {
+                    if (devices[i].terminals[0] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[0] == links[j].terminals[1]) matrix[i - 1, j]--;
+                    if (devices[i].terminals[1] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[1] == links[j].terminals[1]) matrix[i - 1, j]--;
+                }
+            }
+
+            matrix[devices.Count - 1, links.Count + gn]++;
+
+            for (int i = 1; i < devices.Count; i++)
+            {
+                for (int j = 0; j < links.Count; j++)
+                {
+                    if (devices[i].terminals[0] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[0] == links[j].terminals[1]) matrix[i - 1, j]--;
+                    if (devices[i].terminals[1] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[1] == links[j].terminals[1]) matrix[i - 1, j]--;
+                }
+            }
+
+            textBox1.Text += "\r\nMatrix:\r\n";
+
+            for (int i = 0; i < terminals.Count - 1; i++)
+            {
+                for (int j = 0; j < terminals.Count; j++)
+                {
+                    textBox1.Text += matrix[i, j].ToString() + "\r\t";
+                }
+                textBox1.Text += System.Environment.NewLine;
             }
         }
     }

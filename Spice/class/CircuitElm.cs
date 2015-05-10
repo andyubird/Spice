@@ -23,11 +23,9 @@ namespace Spice
 
         public char type = 'w';
 
-        public float resistance = 5;
+        public float characteristic = 5;
 
-        public float voltage = 5;
-
-        public int[] connectedNodes = new int[2];
+        public int[] terminals = new int[2];
 
         public Pen myPen = new Pen(Color.DarkGray, 2);
 
@@ -61,6 +59,8 @@ namespace Spice
         public void draw(Graphics screen)
         {
             screen.DrawLine(myPen, pt1, pt2);
+            Point midpoint = new Point((pt1.X+pt2.X)/2,(pt1.Y+pt2.Y)/2);
+            screen.DrawString(type.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint);
         }
 
         public bool checkBound(Point mouse)
@@ -80,11 +80,11 @@ namespace Spice
 
         public string getDump()
         {
-            if (type == 'r')
+            if (type != 'w' && type != 'g')
             {
-                return type.ToString() + connectedNodes[0].ToString() + connectedNodes[1].ToString() + " " + resistance.ToString();
+                return type.ToString() + " " + terminals[0].ToString() + " " + terminals[1].ToString() + " " + characteristic.ToString();
             }
-            return type.ToString() + " " + connectedNodes[0].ToString() + " " + connectedNodes[1].ToString();
+            return type.ToString() + " " + terminals[0].ToString() + " " + terminals[1].ToString();
         }
     }
 }

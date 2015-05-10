@@ -35,6 +35,8 @@
             this.wireToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resistorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dCVoltageSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,12 +46,10 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.Frametime = new System.Windows.Forms.Timer(this.components);
-            this.groundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -64,7 +64,7 @@
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(784, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(984, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -102,6 +102,23 @@
             this.dCVoltageSourceToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.dCVoltageSourceToolStripMenuItem.Text = "DC Voltage Source";
             this.dCVoltageSourceToolStripMenuItem.Click += new System.EventHandler(this.dCVoltageSourceToolStripMenuItem_Click);
+            // 
+            // groundToolStripMenuItem
+            // 
+            this.groundToolStripMenuItem.Name = "groundToolStripMenuItem";
+            this.groundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.groundToolStripMenuItem.Text = "Ground";
+            this.groundToolStripMenuItem.Click += new System.EventHandler(this.groundToolStripMenuItem_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // filesToolStripMenuItem
             // 
@@ -158,7 +175,7 @@
             this.aboutToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(784, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(984, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -170,14 +187,20 @@
             this.toolStripStatusLabel1});
             this.statusStrip1.Location = new System.Drawing.Point(0, 540);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(784, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(984, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel3
+            // 
+            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel3.Text = "toolStripStatusLabel3";
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(502, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(533, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 
@@ -193,42 +216,19 @@
             this.Frametime.Interval = 10;
             this.Frametime.Tick += new System.EventHandler(this.Frametime_Tick);
             // 
-            // groundToolStripMenuItem
-            // 
-            this.groundToolStripMenuItem.Name = "groundToolStripMenuItem";
-            this.groundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.groundToolStripMenuItem.Text = "Ground";
-            this.groundToolStripMenuItem.Click += new System.EventHandler(this.groundToolStripMenuItem_Click);
-            // 
-            // toolStripStatusLabel3
-            // 
-            this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(118, 17);
-            this.toolStripStatusLabel3.Text = "toolStripStatusLabel3";
-            // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(603, 336);
+            this.textBox1.Location = new System.Drawing.Point(629, 66);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(169, 188);
+            this.textBox1.Size = new System.Drawing.Size(343, 460);
             this.textBox1.TabIndex = 3;
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 562);
+            this.ClientSize = new System.Drawing.Size(984, 562);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
