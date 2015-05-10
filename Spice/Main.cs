@@ -60,18 +60,33 @@ namespace Spice
 
         private void Main_MouseDown(object sender, MouseEventArgs e)
         {
-            for (int i = 0; i < lines.Count; i++)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                for (int i = 0; i < lines.Count; i++)
                 {
-                    lines.RemoveAt(i);
-                    return;
+                    if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                    {
+                        lines.RemoveAt(i);
+                        return;
+                    }
+                }
+                temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
+                _mousePressed = true;
+                lines.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
+                lines[lines.Count - 1].round(gridSize);
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                    {
+                        PropertyEditor pe = new PropertyEditor(lines[i]);
+                        pe.ShowDialog();
+                        return;
+                    }
                 }
             }
-            temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
-            _mousePressed = true;
-            lines.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
-            lines[lines.Count - 1].round(gridSize);
         }
 
         private void Main_MouseUp(object sender, MouseEventArgs e)
@@ -160,6 +175,15 @@ namespace Spice
                 }
 
                 textBox1.Text += System.Environment.NewLine;
+            }
+
+            foreach (CircuitElm item in lines)
+            {
+                for (int i = 0; i < nodes.Count; i++)
+                {
+                    if (item.pt1 == nodes[i].pt) item.connectedNodes[0] = i;
+                    if (item.pt2 == nodes[i].pt) item.connectedNodes[1] = i;
+                }
             }
 
             foreach (CircuitElm item in lines)

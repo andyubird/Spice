@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace Spice
 {
-    class CircuitElm
+    public class CircuitElm
     {
         private int roundto(int a, int b)
         {
@@ -21,7 +21,13 @@ namespace Spice
             }
         }
 
-        private char type = 'w';
+        public char type = 'w';
+
+        public float resistance = 5;
+
+        public float voltage = 5;
+
+        public int[] connectedNodes = new int[2];
 
         public Pen myPen = new Pen(Color.DarkGray, 2);
 
@@ -74,7 +80,11 @@ namespace Spice
 
         public string getDump()
         {
-            return type.ToString();
+            if (type == 'r')
+            {
+                return type.ToString() + connectedNodes[0].ToString() + connectedNodes[1].ToString() + " " + resistance.ToString();
+            }
+            return type.ToString() + " " + connectedNodes[0].ToString() + " " + connectedNodes[1].ToString();
         }
     }
 }
