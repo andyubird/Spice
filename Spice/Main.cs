@@ -13,8 +13,6 @@ namespace Spice
     {
         int toolBarHeight = 50;
         int statusBarHeight = 22;
-        int gridSize = 20;
-
         List<Line> lines = new List<Line>();
 
         Point temppoint;
@@ -66,31 +64,19 @@ namespace Spice
             temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
             _mousePressed = true;
             lines.Add(new Line(temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
-            lines[lines.Count - 1].round(gridSize);
         }
 
         private void Main_MouseUp(object sender, MouseEventArgs e)
         {
-            if (_mousePressed == true)
-            {
-                lines[lines.Count - 1].pt2 = PointToClient(System.Windows.Forms.Cursor.Position);
-                lines[lines.Count - 1].round(gridSize);
-                _mousePressed = false;
-                toolStripStatusLabel1.Text = lines[lines.Count - 1].pt2.ToString();
-            }
+            lines[lines.Count-1].pt2 = PointToClient(System.Windows.Forms.Cursor.Position);
+            _mousePressed = false;
         }
 
         private void Main_MouseMove(object sender, MouseEventArgs e)
         {
             if (_mousePressed == true)
             {
-                lines[lines.Count - 1].pt2 = PointToClient(System.Windows.Forms.Cursor.Position);
-                lines[lines.Count - 1].round(gridSize);
-                toolStripStatusLabel1.Text = lines[lines.Count - 1].pt2.ToString();
-            }
-            else
-            {
-                toolStripStatusLabel1.Text = PointToClient(System.Windows.Forms.Cursor.Position).ToString();
+            lines[lines.Count-1].pt2 = PointToClient( System.Windows.Forms.Cursor.Position);
             }
         }
     }
