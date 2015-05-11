@@ -286,32 +286,14 @@ namespace Spice
 
             matrix[devices.Count - 1, links.Count + gn]++;
 
-            for (int i = 0; i < devices.Count; i++)
+            for (int i = 1; i < devices.Count; i++)
             {
-                if (devices[i].type == 'r')
+                for (int j = 0; j < links.Count; j++)
                 {
-                    for (int j = 0; j < links.Count; j++)
-                    {
-                        if (devices[i].terminals[0] == links[j].terminals[0]) matrix[devices.Count + i, j] += devices[i].characteristic;
-                        if (devices[i].terminals[0] == links[j].terminals[1]) matrix[devices.Count + i, j] -= devices[i].characteristic;
-                    }
-
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[0])) matrix[devices.Count + i, links.Count + j]++;
-                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[1])) matrix[devices.Count + i, links.Count + j]--;
-                    }
-                }
-
-                if (devices[i].type == 'v')
-                {
-                    for (int j = 0; j < nodes.Count; j++)
-                    {
-                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[0])) matrix[devices.Count + i, links.Count + j]++;
-                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[1])) matrix[devices.Count + i, links.Count + j]--;
-                    }
-
-                    matrix[devices.Count + i, terminals.Count - 1] += devices[i].characteristic;
+                    if (devices[i].terminals[0] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[0] == links[j].terminals[1]) matrix[i - 1, j]--;
+                    if (devices[i].terminals[1] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[1] == links[j].terminals[1]) matrix[i - 1, j]--;
                 }
             }
 
