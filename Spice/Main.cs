@@ -15,10 +15,12 @@ namespace Spice
         int statusBarHeight = 22;
         int gridSize = 20;
 
-        List<Line> lines = new List<Line>();
+        List<CircuitElm> lines = new List<CircuitElm>();
 
         Point temppoint;
         bool _mousePressed;
+
+        char tool = 'w';
 
         public Main()
         {
@@ -27,11 +29,6 @@ namespace Spice
 
         private void Main_Load(object sender, EventArgs e)
         {
-        }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void Main_Paint(object sender, PaintEventArgs e)
@@ -52,7 +49,7 @@ namespace Spice
 
             for (int i = 0; i < lines.Count; i++)
             {
-                screen.DrawLine(myPen, lines[i].pt1, lines[i].pt2);
+                lines[i].draw(screen);
             }
         }
 
@@ -63,10 +60,33 @@ namespace Spice
 
         private void Main_MouseDown(object sender, MouseEventArgs e)
         {
-            temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
-            _mousePressed = true;
-            lines.Add(new Line(temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
-            lines[lines.Count - 1].round(gridSize);
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                    {
+                        lines.RemoveAt(i);
+                        return;
+                    }
+                }
+                temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
+                _mousePressed = true;
+                lines.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
+                lines[lines.Count - 1].round(gridSize);
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                    {
+                        PropertyEditor pe = new PropertyEditor(lines[i]);
+                        pe.ShowDialog();
+                        return;
+                    }
+                }
+            }
         }
 
         private void Main_MouseUp(object sender, MouseEventArgs e)
@@ -78,6 +98,8 @@ namespace Spice
                 _mousePressed = false;
                 toolStripStatusLabel1.Text = lines[lines.Count - 1].pt2.ToString();
             }
+
+            lines.RemoveAll(item => item.pt1 == item.pt2);
         }
 
         private void Main_MouseMove(object sender, MouseEventArgs e)
@@ -90,7 +112,218 @@ namespace Spice
             }
             else
             {
-                toolStripStatusLabel1.Text = PointToClient(System.Windows.Forms.Cursor.Position).ToString();
+                toolStripStatusLabel1.Text = PointToClient(System.Windows.Forms.Cursor.Position).ToString() + lines.Count.ToString();
+            }
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
+                {
+                    toolStripStatusLabel3.Text = lines[i].getDump();
+                }
+            }
+        }
+
+        private void wireToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'w';
+            toolStripStatusLabel3.Text = "Wire";
+        }
+
+        private void resistorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'r';
+            toolStripStatusLabel3.Text = "Resistor";
+        }
+
+        private void dCVoltageSourceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'v';
+            toolStripStatusLabel3.Text = "DC Voltage Source";
+        }
+
+        private void groundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'g';
+            toolStripStatusLabel3.Text = "Ground";
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            List<Terminal> terminals = new List<Terminal>();
+            List<NodeElm> nodes = new List<NodeElm>();
+
+
+            //Create terminal list
+            foreach (CircuitElm item in lines)
+            {
+                if (!terminals.Exists(elm => elm.pt == item.pt1)) terminals.Add(new Terminal(item.pt1));
+                if (!terminals.Exists(elm => elm.pt == item.pt2)) terminals.Add(new Terminal(item.pt2));
+            }
+
+            //Create connected circuit list inside each terminal
+            for (int i = 0; i < lines.Count; i++)
+            {
+                foreach (Terminal terminal in terminals)
+                {
+                    if (terminal.pt == lines[i].pt1) terminal.addtolist(i);
+                    if (terminal.pt == lines[i].pt2) terminal.addtolist(i);
+                }
+            }
+
+            //Add terminal numbers to each CircuitElm in lines
+            foreach (CircuitElm item in lines)
+            {
+                for (int i = 0; i < terminals.Count; i++)
+                {
+                    if (item.pt1 == terminals[i].pt) item.terminals[0] = i;
+                    if (item.pt2 == terminals[i].pt) item.terminals[1] = i;
+                }
+            }
+
+            //Create node list
+            for (int i = 0; i < terminals.Count; i++)
+            {
+                //Check if a terminal is already in a node
+                if (nodes.Exists(node => node.connectedTerminals.Exists(t => t == i))) continue;
+
+                //Create node and add all other connected teminals
+                nodes.Add(new NodeElm());
+                nodes.Last().addtolist(i);
+
+                bool finished = true;
+                do
+                {
+                    finished = true;
+                    for (int j = 0; j < nodes.Last().connectedTerminals.Count; j++)
+                    {
+                        for (int k = 0; k < lines.Count; k++)
+                        {
+                            if (lines[k].type == 'w' && lines[k].terminals.Contains(nodes.Last().connectedTerminals[j]))
+                            {
+                                int index = System.Array.IndexOf(lines[k].terminals, nodes.Last().connectedTerminals[j]);
+                                int otherTerminal = lines[k].terminals[(-1) * index + 1];
+                                if (!nodes.Last().connectedTerminals.Exists(t => t == otherTerminal))
+                                {
+                                    nodes.Last().addtolist(otherTerminal);
+                                    finished = false;
+                                }
+                            }
+                        }
+                    }
+                } while (!finished);
+
+            }
+
+
+
+
+
+
+
+
+
+
+            textBox1.Text = "List of terminals:\r\n";
+
+            foreach (Terminal terminal in terminals)
+            {
+                textBox1.Text += terminal.pt.ToString();
+                foreach (int a in terminal.connectedCircuits)
+                {
+                    textBox1.Text += " " + a.ToString();
+                }
+
+                textBox1.Text += System.Environment.NewLine;
+            }
+
+            textBox1.Text += "\r\nList of elements:\r\n";
+
+            foreach (CircuitElm item in lines)
+            {
+                textBox1.Text += item.getDump() + System.Environment.NewLine;
+            }
+
+            textBox1.Text += "\r\nList of nodes:\r\n";
+
+            foreach (NodeElm node in nodes)
+            {
+                textBox1.Text += node.getDump() + System.Environment.NewLine;
+            }
+
+            //find ground terminal and obsolete ground terminal
+
+            int gt, ogt, gn = new int();
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                if (lines[i].type == 'g')
+                {
+                    ogt = terminals.FindIndex(t => t.connectedCircuits.Contains(i) && t.connectedCircuits.Count == 1);
+                    gt = terminals.FindIndex(t => t.connectedCircuits.Contains(i) && t.connectedCircuits.Count != 1);
+                    gn = nodes.FindIndex(n => n.connectedTerminals.Contains(gt));
+                    textBox1.Text += "\r\nGround node:" + gn.ToString() + "\r\n";
+                }
+            }
+
+            //build matrix
+
+            float[,] matrix = new float[terminals.Count - 1, terminals.Count];
+
+            List<CircuitElm> devices = lines.FindAll(line => line.type != 'w' && line.type != 'g');
+            List<CircuitElm> links = lines.FindAll(line => line.type == 'w');
+
+            for (int i = 1; i < devices.Count; i++)
+            {
+                for (int j = 0; j < links.Count; j++)
+                {
+                    if (devices[i].terminals[0] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[0] == links[j].terminals[1]) matrix[i - 1, j]--;
+                    if (devices[i].terminals[1] == links[j].terminals[0]) matrix[i - 1, j]++;
+                    if (devices[i].terminals[1] == links[j].terminals[1]) matrix[i - 1, j]--;
+                }
+            }
+
+            matrix[devices.Count - 1, links.Count + gn]++;
+
+            for (int i = 0; i < devices.Count; i++)
+            {
+                if (devices[i].type == 'r')
+                {
+                    for (int j = 0; j < links.Count; j++)
+                    {
+                        if (devices[i].terminals[0] == links[j].terminals[0]) matrix[devices.Count + i, j] += devices[i].characteristic;
+                        if (devices[i].terminals[0] == links[j].terminals[1]) matrix[devices.Count + i, j] -= devices[i].characteristic;
+                    }
+
+                    for (int j = 0; j < nodes.Count; j++)
+                    {
+                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[0])) matrix[devices.Count + i, links.Count + j]++;
+                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[1])) matrix[devices.Count + i, links.Count + j]--;
+                    }
+                }
+
+                if (devices[i].type == 'v')
+                {
+                    for (int j = 0; j < nodes.Count; j++)
+                    {
+                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[0])) matrix[devices.Count + i, links.Count + j]++;
+                        if (nodes[j].connectedTerminals.Contains(devices[i].terminals[1])) matrix[devices.Count + i, links.Count + j]--;
+                    }
+
+                    matrix[devices.Count + i, terminals.Count - 1] += devices[i].characteristic;
+                }
+            }
+
+            textBox1.Text += "\r\nMatrix:\r\n";
+
+            for (int i = 0; i < terminals.Count - 1; i++)
+            {
+                for (int j = 0; j < terminals.Count; j++)
+                {
+                    textBox1.Text += matrix[i, j].ToString() + "\r\t";
+                }
+                textBox1.Text += System.Environment.NewLine;
             }
         }
     }
