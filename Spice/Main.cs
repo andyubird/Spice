@@ -325,6 +325,57 @@ namespace Spice
                 }
                 textBox1.Text += System.Environment.NewLine;
             }
+
+            //solve matrix
+            int l = 1;
+            float temp;
+            float r;
+            float[] sol = new float[terminals.Count - 1];
+            for (int i = 0; i < terminals.Count - 1; i++)
+                for (int j = 0; j < terminals.Count - 1; j++)
+                    if (i != j)
+                    {
+                        while (matrix[i, i] == 0)
+                        {
+
+                            if (matrix[l + i, i] != 0)
+                                for (int k = i; k < terminals.Count; k++)
+                                {
+                                    temp = matrix[l + i, k];
+                                    matrix[l + i, k] = matrix[i, k];
+                                    matrix[i, k] = temp;
+                                }
+                            l++;
+                        }
+
+
+                        if (matrix[i, i] != 0)
+                        {
+                            r = matrix[j, i] / matrix[i, i];
+
+                            for (int k = i; k < terminals.Count; k++)
+                                matrix[j, k] += -r * matrix[i, k];
+                        }
+
+                    }
+            for (int i = 0; i < terminals.Count - 1; i++)
+            {
+
+                matrix[i, terminals.Count - 1] = matrix[i, terminals.Count - 1] / matrix[i, i];
+                matrix[i, i] = 1;
+                sol[i] = matrix[i, terminals.Count - 1];
+            }
+
+            //output sol
+            for (int i = 0; i < links.Count; i++)
+            {
+                textBox1.Text += "Link " + i.ToString() + ": " + sol[i] + System.Environment.NewLine;
+            }
+
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                textBox1.Text += "Node " + i.ToString() + ": " + sol[links.Count + i - 1] + System.Environment.NewLine;
+            }
         }
     }
 }
