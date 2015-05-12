@@ -375,9 +375,17 @@ namespace Spice
                 textBox1.Text += "Link " + i.ToString() + ": " + sol[i] + System.Environment.NewLine;
             }
 
+            int groundnode = 0;
             for (int i = 0; i < nodes.Count; i++)
             {
-                textBox1.Text += "Node " + i.ToString() + ": " + sol[links.Count + i - 1] + System.Environment.NewLine;
+                if (i != gn)
+                {
+                    textBox1.Text += "Node " + i.ToString() + ": " + sol[links.Count + i - groundnode] + System.Environment.NewLine;
+                }
+                else
+                {
+                    groundnode++;
+                }
             }
         }
     }
