@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -333,6 +333,8 @@ namespace Spice
             float[] sol = new float[terminals.Count - 1];
             for (int i = 0; i < terminals.Count - 1; i++)
                 for (int j = 0; j < terminals.Count - 1; j++)
+                {
+                    l = 1;
                     if (i != j)
                     {
                         while (matrix[i, i] == 0)
@@ -358,6 +360,7 @@ namespace Spice
                         }
 
                     }
+                }
             for (int i = 0; i < terminals.Count - 1; i++)
             {
 
