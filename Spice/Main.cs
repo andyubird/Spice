@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO; // File: for BinaryWriter BinaryReader
 
 namespace Spice
 {
@@ -389,5 +390,61 @@ namespace Spice
                 }
             }
         }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String myfile = "";
+
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            // 由 Open File Dialog 得到檔案名字
+            saveFileDialog1.ShowDialog();
+            myfile = saveFileDialog1.FileName;
+
+            //Check there is somthing or not in "myfile"
+            if (myfile == "")
+            {
+                return;
+            }
+
+            // 設定檔案
+            FileStream outFile = new FileStream(myfile, FileMode.Create, FileAccess.Write);
+            
+            // 開檔
+            StreamWriter streamOut = new StreamWriter(outFile);
+            // 寫檔
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                streamOut.WriteLine(lines[i].saveDump());
+            }
+            streamOut.Close();
+            
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filename = openFileDialog1.FileName;
+
+                string[] filelines = File.ReadAllLines(filename);
+
+                lines.Clear();
+
+                for(int i = 0; i < filelines.Length; i++)
+                {
+                    string[] splitLines = filelines[i].Split(' ');
+
+                    if (splitLines.Length == 5) { lines.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]))); }
+                    if (splitLines.Length == 6) { lines.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]), (float)Convert.ToDouble(splitLines[5]))); }
+                }
+
+            }
+        }
+
+        
     }
 }
