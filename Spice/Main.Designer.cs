@@ -51,7 +51,6 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.Frametime = new System.Windows.Forms.Timer(this.components);
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -86,28 +85,28 @@
             // wireToolStripMenuItem
             // 
             this.wireToolStripMenuItem.Name = "wireToolStripMenuItem";
-            this.wireToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.wireToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.wireToolStripMenuItem.Text = "Wire";
             this.wireToolStripMenuItem.Click += new System.EventHandler(this.wireToolStripMenuItem_Click);
             // 
             // resistorToolStripMenuItem
             // 
             this.resistorToolStripMenuItem.Name = "resistorToolStripMenuItem";
-            this.resistorToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.resistorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.resistorToolStripMenuItem.Text = "Resistor";
             this.resistorToolStripMenuItem.Click += new System.EventHandler(this.resistorToolStripMenuItem_Click);
             // 
             // dCVoltageSourceToolStripMenuItem
             // 
             this.dCVoltageSourceToolStripMenuItem.Name = "dCVoltageSourceToolStripMenuItem";
-            this.dCVoltageSourceToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.dCVoltageSourceToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.dCVoltageSourceToolStripMenuItem.Text = "DC Voltage Source";
             this.dCVoltageSourceToolStripMenuItem.Click += new System.EventHandler(this.dCVoltageSourceToolStripMenuItem_Click);
             // 
             // groundToolStripMenuItem
             // 
             this.groundToolStripMenuItem.Name = "groundToolStripMenuItem";
-            this.groundToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.groundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.groundToolStripMenuItem.Text = "Ground";
             this.groundToolStripMenuItem.Click += new System.EventHandler(this.groundToolStripMenuItem_Click);
             // 
@@ -135,26 +134,26 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // optionsToolStripMenuItem
@@ -188,7 +187,7 @@
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 497);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 540);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(984, 22);
             this.statusStrip1.TabIndex = 2;
@@ -197,20 +196,20 @@
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(128, 17);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel3.Text = "toolStripStatusLabel3";
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(713, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(733, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // Frametime
@@ -221,17 +220,17 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(629, 61);
+            this.textBox1.Location = new System.Drawing.Point(629, 66);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(343, 425);
+            this.textBox1.Size = new System.Drawing.Size(343, 460);
             this.textBox1.TabIndex = 3;
             // 
             // Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 519);
+            this.ClientSize = new System.Drawing.Size(984, 562);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -279,7 +278,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 
     }
 }

@@ -41,6 +41,16 @@ namespace Spice
             pt2.Y = y2;
         }
 
+        public CircuitElm(char tool, int x1, int y1, int x2, int y2, float chara)
+        {
+            type = tool;
+            pt1.X = x1;
+            pt1.Y = y1;
+            pt2.X = x2;
+            pt2.Y = y2;
+            characteristic = chara;
+        }
+
         public CircuitElm(char tool, Point a, Point b)
         {
             type = tool;
@@ -85,6 +95,15 @@ namespace Spice
                 return type.ToString() + " " + terminals[0].ToString() + " " + terminals[1].ToString() + " " + characteristic.ToString();
             }
             return type.ToString() + " " + terminals[0].ToString() + " " + terminals[1].ToString();
+        }
+
+        public string saveDump()
+        {
+            if (type != 'w' && type != 'g')
+            {
+                return type.ToString() + " " + pt1.X.ToString() + " " + pt1.Y.ToString() + " " + pt2.X.ToString() + " " + pt2.Y.ToString() + " " + characteristic.ToString();
+            }
+            return type.ToString() + " " + pt1.X.ToString() + " " + pt1.Y.ToString() + " " + pt2.X.ToString() + " " + pt2.Y.ToString();
         }
     }
 }
