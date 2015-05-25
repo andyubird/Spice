@@ -182,6 +182,7 @@ namespace Spice
             }
 
             //Create node list
+            //找到相同電位的多個終點terminal並歸在同一個node
             for (int i = 0; i < terminals.Count; i++)
             {
                 //Check if a terminal is already in a node
@@ -214,8 +215,8 @@ namespace Spice
                 } while (!finished);
 
             }
-
-
+            //end node list
+            
 
 
 
