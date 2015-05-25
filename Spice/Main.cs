@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO; // File: for BinaryWriter BinaryReader
 
 namespace Spice
 {
@@ -388,5 +389,31 @@ namespace Spice
                 }
             }
         }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            String myfile = "";
+            // 由 Open File Dialog 得到檔案名字
+            saveFileDialog1.ShowDialog();
+            myfile = saveFileDialog1.FileName;
+            // 設定檔案
+            FileStream outFile = new FileStream(myfile, FileMode.Create, FileAccess.Write);
+            //Check there is somthing or not in "myfile"
+            if(myfile==null){
+                return;
+            }
+            // 開檔
+            StreamWriter streamOut = new StreamWriter(outFile);
+            // 寫檔
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                streamOut.WriteLine(lines[i].getDump());
+            }
+            streamOut.Close();
+            
+        }
+
+        
     }
 }
