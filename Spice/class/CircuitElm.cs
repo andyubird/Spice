@@ -77,8 +77,10 @@ namespace Spice
             {
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                     screen.DrawLine(myPen, pt1, pt2);
+                if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
+                    screen.DrawLine(myPen, pt1, pt2);
 
-                if (pt1.X == pt2.X)
+                if ((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
                 {
                     //設定第0個轉折點
                     turnpt[0].X = midpoint.X;
@@ -119,7 +121,7 @@ namespace Spice
                         screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
                     screen.DrawLine(myPen, turnpt[16], pt2);
                 }//end if
-                if (pt1.Y == pt2.Y)
+                if ((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
                 {
                     //設定第0個轉折點
                     turnpt[0].X = midpoint.X - 16;
