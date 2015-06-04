@@ -154,6 +154,7 @@ namespace Spice
             List<Terminal> terminals = new List<Terminal>();
             List<NodeElm> nodes = new List<NodeElm>();
 
+            if (lines.Count == 0) return;
 
             //Create terminal list
             foreach (CircuitElm item in lines)
@@ -438,6 +439,11 @@ namespace Spice
                 }
 
             }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lines.Clear();
         }
 
         

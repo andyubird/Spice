@@ -18,14 +18,17 @@ namespace Spice
 
         public PropertyEditor(CircuitElm elm)
         {
+            InitializeComponent();
+
             if (elm.type == 'r')
             {
                 TextBox r = new TextBox();
+                r.SetBounds(20, 15, 110, 50);
                 r.Text = elm.characteristic.ToString();
                 Controls.Add(r);
 
                 r.TextChanged += delegate
-                { elm.characteristic = Convert.ToInt32(r.Text); };
+                { if(r.Text!=String.Empty) elm.characteristic = Convert.ToInt32(r.Text); };
             }
         }
     }

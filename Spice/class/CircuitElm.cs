@@ -32,6 +32,8 @@ namespace Spice
         public Point pt1;
         public Point pt2;
 
+        public CircuitElm() { }
+
         public CircuitElm(char tool, int x1, int y1, int x2, int y2)
         {
             type = tool;
