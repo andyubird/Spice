@@ -21,6 +21,17 @@ namespace Spice
             }
         }
 
+        private void allocNodes()
+        {
+            nodes = new int[getPostCount()+getInternalNodeCount()];
+	        volts = new double[getPostCount()+getInternalNodeCount()];
+        }
+
+        public int[] nodes;
+        public double[] volts;
+        public double current, curcount;
+        public int voltSource;
+
         public char type = 'w';
 
         public float characteristic = 5;
@@ -34,6 +45,57 @@ namespace Spice
 
         public CircuitElm() { }
 
+        public int getVoltageSourceCount() { if (type == 'v' || type == 'g' || type == 'w') return 1; else return 0; }
+
+        public int getInternalNodeCount() { return 0; }
+
+        public Point getPost(int i) { if (i == 0) return pt1; else return pt2; }
+
+        public void setNode(int p, int n) { nodes[p] = n; }
+
+        public int getNode(int n) { return nodes[n]; }
+
+        public bool hasGroundConnection(int n1) { if (type == 'g') return true; else return false; }
+
+        public bool getConnection(int n1, int n2) { return true; }
+
+        public bool isWire() { if (type == 'w') return true; else return false; }
+
+        public double getCurrent() { return current; }
+
+        public void reset()
+        {
+            int i;
+            for (i = 0; i != getPostCount() + getInternalNodeCount(); i++)
+                volts[i] = 0;
+            curcount = 0;
+        }
+
+        public void setNodeVoltage(int n, double c)
+        {
+            volts[n] = c;
+            calculateCurrent();
+        }
+
+        public void stamp(Main sim)
+        {
+            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, characteristic);
+            if (type == 'w') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
+            if (type == 'g') sim.stampVoltageSource(0, nodes[0], voltSource, 0);
+            if (type == 'r') sim.stampResistor(nodes[0], nodes[1], characteristic);
+        }
+
+        public int getPostCount() { if (type == 'g') return 1; else return 2; }
+
+        public bool nonLinear() { return false; }
+
+        public void setVoltageSource(int n, int v) { voltSource = v; }
+
+        void calculateCurrent()
+        {
+            if (type == 'r') current = (volts[0] - volts[1]) / characteristic;
+        }
+
         public CircuitElm(char tool, int x1, int y1, int x2, int y2)
         {
             type = tool;
@@ -41,6 +103,7 @@ namespace Spice
             pt1.Y = y1;
             pt2.X = x2;
             pt2.Y = y2;
+            allocNodes();
         }
 
         public CircuitElm(char tool, int x1, int y1, int x2, int y2, float chara)
@@ -51,6 +114,7 @@ namespace Spice
             pt2.X = x2;
             pt2.Y = y2;
             characteristic = chara;
+            allocNodes();
         }
 
         public CircuitElm(char tool, Point a, Point b)
@@ -58,6 +122,7 @@ namespace Spice
             type = tool;
             pt1 = a;
             pt2 = b;
+            allocNodes();
         }
 
         public void round(int a)
@@ -70,10 +135,10 @@ namespace Spice
 
         public void draw(Graphics screen)
         {
-           
-            
+
+
             Point midpoint = new Point((pt1.X + pt2.X) / 2, (pt1.Y + pt2.Y) / 2);
-            Point [] turnpt = new Point [17];
+            Point[] turnpt = new Point[17];
             int i;
             if (type == 'r')
             {
@@ -165,7 +230,7 @@ namespace Spice
                     screen.DrawLine(myPen, turnpt[16], pt2);
                 }//end if
             }
-            if(type == 'w')
+            if (type == 'w')
                 screen.DrawLine(myPen, pt1, pt2);
             if (type == 'v')
             {
@@ -214,7 +279,7 @@ namespace Spice
                     voltterminal[5].Y = midpoint.Y + 8;
                     screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
                 }
-                if((pt1.X!=pt2.X) && (pt1.Y!=pt2.Y))
+                if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                     screen.DrawLine(myPen, pt1, pt2);
             }
 
@@ -241,25 +306,25 @@ namespace Spice
                 gndterminal[5].X = pt2.X - 2;
                 screen.DrawLine(myPen, gndterminal[4], gndterminal[5]);
             }
-               
-            
-            
-    
-                
+
+
+
+
+
 
             screen.DrawString(type.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint);
         }
 
- /*      public void turningpoint(Point startpoint[])
-        {
-            startpoint[0].X - 2;
-            startpoint[0].Y + 1;
-            startpoint[0].X + 2;
-            startpoint[0].Y + 3;
-            startpoint[0].X;
-            startpoint[0].Y + 4;
-        }
- */
+        /*      public void turningpoint(Point startpoint[])
+               {
+                   startpoint[0].X - 2;
+                   startpoint[0].Y + 1;
+                   startpoint[0].X + 2;
+                   startpoint[0].Y + 3;
+                   startpoint[0].X;
+                   startpoint[0].Y + 4;
+               }
+        */
         public bool checkBound(Point mouse)
         {
             Rectangle r = new Rectangle((pt1.X + pt2.X) / 2 - 5, (pt1.Y + pt2.Y) / 2 - 5, 10, 10);
