@@ -20,7 +20,7 @@ namespace Spice
         {
             InitializeComponent();
 
-            if (elm.type == 'r')
+            if (elm.type != 'w' && elm.type != 'g')
             {
                 TextBox r = new TextBox();
                 r.SetBounds(20, 15, 110, 50);

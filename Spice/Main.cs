@@ -21,10 +21,11 @@ namespace Spice
         List<CircuitNode> nodeList;
         CircuitElm[] voltageSources;
         CircuitElm stopElm;
-        bool circuitNonLinear, circuitNeedsMap;
+        bool circuitNonLinear, circuitNeedsMap, analyzeFlag;
         int voltageSourceCount;
         int[] circuitPermute;
         string stopMessage;
+        double t, timeStep = 5e-6;
 
         double[][] circuitMatrix, origMatrix;
         double[] circuitRightSide, origRightSide;
@@ -45,8 +46,19 @@ namespace Spice
         {
         }
 
+        long lastTime = 0, lastFrameTime, lastIterTime, secTime = 0;
+        int frames = 0;
+        int steps = 0;
+        int framerate = 0, steprate = 0;
+
         private void Main_Paint(object sender, PaintEventArgs e)
         {
+            if (analyzeFlag)
+            {
+                analyze();
+                analyzeFlag = false;
+            }
+
             //setup screen size and clear background
             Graphics screen = e.Graphics;
             Rectangle rect = this.ClientRectangle;
@@ -65,6 +77,20 @@ namespace Spice
             {
                 elmList[i].draw(screen);
             }
+
+            if (stopMessage != null)
+            {
+                screen.DrawString(stopMessage, new Font("Arial", 16), new SolidBrush(myPen.Color), new Point(100, 500));
+            }
+
+            runCircuit();
+
+            textBox1.Text = "";
+
+            foreach (CircuitElm elm in elmList)
+            {
+                textBox1.Text += elm.getCurrent().ToString() + " ";
+            }
         }
 
         private void Frametime_Tick(object sender, EventArgs e)
@@ -72,6 +98,7 @@ namespace Spice
             this.Invalidate();
         }
 
+        private double getIterCount() {	return .1*Math.Exp((100-61)/24); }
 
         private void analyze()
         {
@@ -255,7 +282,7 @@ namespace Spice
                 {
                     if (!closure[i] && !nodeList[i].isInternal)
                     {
-                        Debug.Write("node " + i + " unconnected");
+                        Debug.WriteLine("node " + i + " unconnected");
                         stampResistor(0, i, 1e8);
                         closure[i] = true;
                         changed = true;
@@ -275,7 +302,7 @@ namespace Spice
                     if (!fpi.findPath(ce.getNode(0), 5) &&
                             !fpi.findPath(ce.getNode(0)))
                     {
-                        Debug.Write(ce + " no path");
+                        Debug.WriteLine(ce + " no path");
                         ce.reset();
                     }
                 }
@@ -305,7 +332,7 @@ namespace Spice
                     FindPathInfo fpi = new FindPathInfo(this, FindPathInfo.SHORT, ce, ce.getNode(1));
                     if (fpi.findPath(ce.getNode(0)))
                     {
-                        Debug.Write(ce + " shorted");
+                        Debug.WriteLine(ce + " shorted");
                         ce.reset();
                     }
                     else
@@ -396,7 +423,7 @@ namespace Spice
                         }
                         if (elt.type != RowInfo.ROW_NORMAL)
                         {
-                            Debug.Write("type already " + elt.type + " for " + qp + "!");
+                            Debug.WriteLine("type already " + elt.type + " for " + qp + "!");
                             continue;
                         }
                         elt.type = RowInfo.ROW_CONST;
@@ -420,7 +447,7 @@ namespace Spice
                                 // we should follow the chain here, but this
                                 // hardly ever happens so it's not worth worrying
                                 // about
-                                Debug.Write("swap failed");
+                                Debug.WriteLine("swap failed");
                                 continue;
                             }
                         }
@@ -544,6 +571,145 @@ namespace Spice
             }
         }
 
+        bool converged;
+        int subIterations;
+        void runCircuit()
+        {
+            if (circuitMatrix == null || elmList.Count == 0)
+            {
+                circuitMatrix = null;
+                return;
+            }
+            int iter;
+            //int maxIter = getIterCount();
+            //bool debugprint = dumpMatrix;
+            //dumpMatrix = false;
+            long steprate = (long)(160 * getIterCount());
+            long tm = Environment.TickCount;
+            long lit = lastIterTime;
+            if (1000 >= steprate * (tm - lastIterTime))
+                return;
+            for (iter = 1; ; iter++)
+            {
+                int i, j, k, subiter;
+                for (i = 0; i != elmList.Count; i++)
+                {
+                    CircuitElm ce = elmList[i];
+                    ce.startIteration();
+                }
+                steps++;
+                int subiterCount = 5000;
+                for (subiter = 0; subiter != subiterCount; subiter++)
+                {
+                    converged = true;
+                    subIterations = subiter;
+                    for (i = 0; i != circuitMatrixSize; i++)
+                        circuitRightSide[i] = origRightSide[i];
+                    if (circuitNonLinear)
+                    {
+                        for (i = 0; i != circuitMatrixSize; i++)
+                            for (j = 0; j != circuitMatrixSize; j++)
+                                circuitMatrix[i][j] = origMatrix[i][j];
+                    }
+                    for (i = 0; i != elmList.Count; i++)
+                    {
+                        CircuitElm ce = elmList[i];
+                        ce.doStep();
+                    }
+                    if (stopMessage != null)
+                        return;
+                    //boolean printit = debugprint;
+                    //debugprint = false;
+                    for (j = 0; j != circuitMatrixSize; j++)
+                    {
+                        for (i = 0; i != circuitMatrixSize; i++)
+                        {
+                            double x = circuitMatrix[i][j];
+                            if (Double.IsNaN(x) || Double.IsInfinity(x))
+                            {
+                                stop("nan/infinite matrix!", null);
+                                return;
+                            }
+                        }
+                    }
+                    //if (printit) {
+                    //    for (j = 0; j != circuitMatrixSize; j++) {
+                    //    for (i = 0; i != circuitMatrixSize; i++)
+                    //        System.out.print(circuitMatrix[j][i] + ",");
+                    //    System.out.print("  " + circuitRightSide[j] + "\n");
+                    //    }
+                    //    System.out.print("\n");
+                    //}
+                    if (circuitNonLinear)
+                    {
+                        if (converged && subiter > 0)
+                            break;
+                        if (!lu_factor(circuitMatrix, circuitMatrixSize,
+                              circuitPermute))
+                        {
+                            stop("Singular matrix!", null);
+                            return;
+                        }
+                    }
+                    lu_solve(circuitMatrix, circuitMatrixSize, circuitPermute,
+                         circuitRightSide);
+
+                    for (j = 0; j != circuitMatrixFullSize; j++)
+                    {
+                        RowInfo ri = circuitRowInfo[j];
+                        double res = 0;
+                        if (ri.type == RowInfo.ROW_CONST)
+                            res = ri.value;
+                        else
+                            res = circuitRightSide[ri.mapCol];
+                        /*System.out.println(j + " " + res + " " +
+                          ri.type + " " + ri.mapCol);*/
+                        if (Double.IsNaN(res))
+                        {
+                            converged = false;
+                            //debugprint = true;
+                            break;
+                        }
+                        if (j < nodeList.Count - 1)
+                        {
+                            CircuitNode cn = nodeList[j + 1];
+                            for (k = 0; k != cn.links.Count; k++)
+                            {
+                                CircuitNodeLink cnl = (CircuitNodeLink)
+                                cn.links.ElementAt(k);
+                                cnl.elm.setNodeVoltage(cnl.num, res);
+                            }
+                        }
+                        else
+                        {
+                            int ji = j - (nodeList.Count - 1);
+                            //System.out.println("setting vsrc " + ji + " to " + res);
+                            voltageSources[ji].setCurrent(ji, res);
+                        }
+                    }
+                    if (!circuitNonLinear)
+                        break;
+                }
+                if (subiter > 5)
+                    Debug.Write("converged after " + subiter + " iterations\n");
+                if (subiter == subiterCount)
+                {
+                    stop("Convergence failed!", null);
+                    break;
+                }
+                t += timeStep;
+                //for (i = 0; i != scopeCount; i++)
+                //scopes[i].timeStep();
+                tm = Environment.TickCount;
+                lit = tm;
+                if (iter * 1000 >= steprate * (tm - lastIterTime) ||
+                (tm - lastFrameTime > 500))
+                    break;
+            }
+            lastIterTime = lit;
+            //System.out.println((System.currentTimeMillis()-lastFrameTime)/(double) iter);
+        }
+
         #region //// Stamping ////
 
         // control voltage source vs with voltage from n1 to n2 (must
@@ -588,7 +754,7 @@ namespace Spice
             double r0 = 1 / r;
             if (Double.IsNaN(r0) || Double.IsInfinity(r0))
             {
-                Debug.Write("bad resistance " + r + " " + r0 + "\n");
+                Debug.WriteLine("bad resistance " + r + " " + r0 + "\n");
                 int a = 0;
                 a /= a;
             }
@@ -934,6 +1100,8 @@ namespace Spice
             analyze();
         }
 
+        private void needAnalyze() { analyzeFlag = true; }
+
         #region //// Mouse operations ////
 
         private void Main_MouseDown(object sender, MouseEventArgs e)
@@ -945,6 +1113,7 @@ namespace Spice
                     if (elmList[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
                     {
                         elmList.RemoveAt(i);
+                        needAnalyze();
                         return;
                     }
                 }
@@ -961,6 +1130,7 @@ namespace Spice
                     {
                         PropertyEditor pe = new PropertyEditor(elmList[i]);
                         pe.ShowDialog();
+                        needAnalyze();
                         return;
                     }
                 }
@@ -978,6 +1148,7 @@ namespace Spice
             }
 
             elmList.RemoveAll(item => item.pt1 == item.pt2);
+            needAnalyze();
         }
 
         private void Main_MouseMove(object sender, MouseEventArgs e)
@@ -987,6 +1158,7 @@ namespace Spice
                 elmList[elmList.Count - 1].pt2 = PointToClient(System.Windows.Forms.Cursor.Position);
                 elmList[elmList.Count - 1].round(gridSize);
                 toolStripStatusLabel1.Text = elmList[elmList.Count - 1].pt2.ToString();
+                needAnalyze();
             }
             else
             {
@@ -1032,7 +1204,7 @@ namespace Spice
 
         #endregion
 
-        #region //// File operation ////
+        #region //// File operations ////
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1053,7 +1225,7 @@ namespace Spice
             // setting
             FileStream outFile = new FileStream(myfile, FileMode.Create, FileAccess.Write);
 
-            // opne File
+            // open File
             StreamWriter streamOut = new StreamWriter(outFile);
             // write File
             // for loop to save one by one
@@ -1087,6 +1259,7 @@ namespace Spice
                     if (splitLines.Length == 6) { elmList.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]), (float)Convert.ToDouble(splitLines[5]))); }
                 }
 
+                needAnalyze();
             }
         }
 
@@ -1096,6 +1269,11 @@ namespace Spice
         }
 
         #endregion
+
+        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stopToolStripMenuItem.Checked = !stopToolStripMenuItem.Checked;
+        }
 
         bool lu_factor(double[][] a, int n, int[] ipvt)
         {
@@ -1170,7 +1348,7 @@ namespace Spice
                 // avoid zeros
                 if (a[j][j] == 0.0)
                 {
-                    Debug.Write("avoided zero");
+                    Debug.WriteLine("avoided zero");
                     a[j][j] = 1e-18;
                 }
 
@@ -1184,14 +1362,55 @@ namespace Spice
             return true;
         }
 
+        void lu_solve(double[][] a, int n, int[] ipvt, double[] b)
+        {
+            int i;
+
+            // find first nonzero b element
+            for (i = 0; i != n; i++)
+            {
+                int row = ipvt[i];
+
+                double swap = b[row];
+                b[row] = b[i];
+                b[i] = swap;
+                if (swap != 0)
+                    break;
+            }
+
+            int bi = i++;
+            for (; i < n; i++)
+            {
+                int row = ipvt[i];
+                int j;
+                double tot = b[row];
+
+                b[row] = b[i];
+                // forward substitution using the lower triangular matrix
+                for (j = bi; j < i; j++)
+                    tot -= a[i][j] * b[j];
+                b[i] = tot;
+            }
+            for (i = n - 1; i >= 0; i--)
+            {
+                double tot = b[i];
+
+                // back-substitution using the upper triangular matrix
+                int j;
+                for (j = i + 1; j != n; j++)
+                    tot -= a[i][j] * b[j];
+                b[i] = tot / a[i][i];
+            }
+        }
+
         void stop(String s, CircuitElm ce)
         {
             stopMessage = s;
             circuitMatrix = null;
             stopElm = ce;
-            Debug.Write(s);
-            //stoppedCheck.setState(true);
-            //analyzeFlag = false;
+            Debug.WriteLine(s);
+            stopToolStripMenuItem.Checked = true;
+            analyzeFlag = false;
             //cv.repaint();
         }
 
@@ -1309,6 +1528,8 @@ namespace Spice
                 return false;
             }
         }
+
+
 
     }
 }

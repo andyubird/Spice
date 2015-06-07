@@ -23,8 +23,8 @@ namespace Spice
 
         private void allocNodes()
         {
-            nodes = new int[getPostCount()+getInternalNodeCount()];
-	        volts = new double[getPostCount()+getInternalNodeCount()];
+            nodes = new int[getPostCount() + getInternalNodeCount()];
+            volts = new double[getPostCount() + getInternalNodeCount()];
         }
 
         public int[] nodes;
@@ -307,12 +307,7 @@ namespace Spice
                 screen.DrawLine(myPen, gndterminal[4], gndterminal[5]);
             }
 
-
-
-
-
-
-            screen.DrawString(type.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint);
+            if (type != 'w' && type != 'g') screen.DrawString(type.ToString() + characteristic.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint + new Size(10, 0));
         }
 
         /*      public void turningpoint(Point startpoint[])
@@ -325,6 +320,16 @@ namespace Spice
                    startpoint[0].Y + 4;
                }
         */
+        public void setCurrent(int x, double c)
+        {
+            if (type != 'g') current = c;
+            else current = -c;
+        }
+
+        public void startIteration() { }
+
+        public void doStep() { }
+
         public bool checkBound(Point mouse)
         {
             Rectangle r = new Rectangle((pt1.X + pt2.X) / 2 - 5, (pt1.Y + pt2.Y) / 2 - 5, 10, 10);
