@@ -31,6 +31,7 @@ namespace Spice
         public double[] volts;
         public double current, curcount;
         public int voltSource;
+        public double voltdiff, compResistance;
 
         public char type = 'w';
 
@@ -75,6 +76,7 @@ namespace Spice
         {
             volts[n] = c;
             calculateCurrent();
+            if (type == 'C') voltdiff = volts[0] - volts[1];
         }
 
         public void stamp(Main sim)
@@ -83,6 +85,13 @@ namespace Spice
             if (type == 'w') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
             if (type == 'g') sim.stampVoltageSource(0, nodes[0], voltSource, 0);
             if (type == 'r') sim.stampResistor(nodes[0], nodes[1], characteristic);
+            if (type == 'C')
+            {
+                compResistance = sim.timeStep / (2 * characteristic);
+                sim.stampResistor(nodes[0], nodes[1], compResistance);
+                sim.stampRightSide(nodes[0]);
+                sim.stampRightSide(nodes[1]);
+            }
         }
 
         public int getPostCount() { if (type == 'g') return 1; else return 2; }
@@ -94,6 +103,15 @@ namespace Spice
         void calculateCurrent()
         {
             if (type == 'r') current = (volts[0] - volts[1]) / characteristic;
+            if (type == 'C')
+            {
+                double voltdiff = volts[0] - volts[1];
+                // we check compResistance because this might get called
+                // before stamp(), which sets compResistance, causing
+                // infinite current
+                if (compResistance > 0)
+                    current = voltdiff / compResistance + curSourceValue;
+            }
         }
 
         public CircuitElm(char tool, int x1, int y1, int x2, int y2)
@@ -230,7 +248,7 @@ namespace Spice
                     screen.DrawLine(myPen, turnpt[16], pt2);
                 }//end if
             }
-            if (type == 'w')
+            if (type == 'w' || type == 'C')
                 screen.DrawLine(myPen, pt1, pt2);
             if (type == 'v')
             {
@@ -326,9 +344,20 @@ namespace Spice
             else current = -c;
         }
 
-        public void startIteration() { }
+        double curSourceValue;
 
-        public void doStep() { }
+        public void startIteration()
+        {
+            if (type == 'C') curSourceValue = -voltdiff / compResistance - current;
+        }
+
+        public void doStep(Main sim)
+        {
+            if (type == 'C')
+            {
+                sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue);
+            }
+        }
 
         public bool checkBound(Point mouse)
         {

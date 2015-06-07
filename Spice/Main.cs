@@ -25,7 +25,7 @@ namespace Spice
         int voltageSourceCount;
         int[] circuitPermute;
         string stopMessage;
-        double t, timeStep = 5e-6;
+        public double t, timeStep = 5e-6;
 
         double[][] circuitMatrix, origMatrix;
         double[] circuitRightSide, origRightSide;
@@ -614,7 +614,7 @@ namespace Spice
                     for (i = 0; i != elmList.Count; i++)
                     {
                         CircuitElm ce = elmList[i];
-                        ce.doStep();
+                        ce.doStep(this);
                     }
                     if (stopMessage != null)
                         return;
@@ -1202,6 +1202,12 @@ namespace Spice
             toolStripStatusLabel3.Text = "Ground";
         }
 
+        private void capacitorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'C';
+            toolStripStatusLabel3.Text = "Capacitor";
+        }
+
         #endregion
 
         #region //// File operations ////
@@ -1528,6 +1534,8 @@ namespace Spice
                 return false;
             }
         }
+
+       
 
 
 
