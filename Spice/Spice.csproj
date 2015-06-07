@@ -47,9 +47,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="class\CircuitElm.cs" />
+    <Compile Include="class\CircuitNode.cs" />
+    <Compile Include="class\CircuitNodeLink.cs" />
+    <Compile Include="class\GroundElm.cs" />
     <Compile Include="class\ResistorElm.cs" />
+    <Compile Include="class\RowInfo.cs" />
     <Compile Include="class\Terminal.cs" />
     <Compile Include="class\NodeElm.cs" />
+    <Compile Include="class\VoltageElm.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Spice
+{
+    public class RowInfo {
+
+		public static readonly int ROW_NORMAL = 0; // Ordinary value.
+		public static readonly int ROW_CONST  = 1; // Value is constant.
+		public static readonly int ROW_EQUAL  = 2; // Value is equal to another value.
+
+		public int nodeEq;
+		public int type;
+		public int mapCol;
+		public int mapRow;
+		public double value;
+		public bool rsChanges; // Row's right side changes.
+		public bool lsChanges; // Row's left side changes.
+		public bool dropRow;   // Row is not needed in matrix.
+
+		public RowInfo() {
+			type = ROW_NORMAL;
+		}
+	}
+}
