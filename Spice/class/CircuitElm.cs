@@ -21,10 +21,6 @@ namespace Spice
             }
         }
 
-        public static Main sim;
-
-        public double current;
-
         public char type = 'w';
 
         public float characteristic = 5;
@@ -37,14 +33,6 @@ namespace Spice
         public Point pt2;
 
         public CircuitElm() { }
-
-        public CircuitElm(int x1, int y1) 
-        {
-            pt1.X = x1;
-            pt1.Y = y1;
-            pt2.X = x1;
-            pt2.Y = y1;
-        }
 
         public CircuitElm(char tool, int x1, int y1, int x2, int y2)
         {
