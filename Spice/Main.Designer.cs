@@ -36,6 +36,7 @@
             this.resistorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dCVoltageSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.capacitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,7 +53,7 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.Frametime = new System.Windows.Forms.Timer(this.components);
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.capacitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resumeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -72,7 +73,8 @@
             // 
             // toolStripDropDownButton1
             // 
-            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DoubleClickEnabled = true;
             this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.wireToolStripMenuItem,
             this.resistorToolStripMenuItem,
@@ -82,45 +84,56 @@
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-            this.toolStripDropDownButton1.Size = new System.Drawing.Size(29, 22);
-            this.toolStripDropDownButton1.Text = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(93, 22);
+            this.toolStripDropDownButton1.Text = "Components";
             // 
             // wireToolStripMenuItem
             // 
+            this.wireToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("wireToolStripMenuItem.Image")));
             this.wireToolStripMenuItem.Name = "wireToolStripMenuItem";
-            this.wireToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.wireToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.wireToolStripMenuItem.Text = "Wire";
             this.wireToolStripMenuItem.Click += new System.EventHandler(this.wireToolStripMenuItem_Click);
             // 
             // resistorToolStripMenuItem
             // 
+            this.resistorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("resistorToolStripMenuItem.Image")));
             this.resistorToolStripMenuItem.Name = "resistorToolStripMenuItem";
-            this.resistorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.resistorToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.resistorToolStripMenuItem.Text = "Resistor";
             this.resistorToolStripMenuItem.Click += new System.EventHandler(this.resistorToolStripMenuItem_Click);
             // 
             // dCVoltageSourceToolStripMenuItem
             // 
+            this.dCVoltageSourceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("dCVoltageSourceToolStripMenuItem.Image")));
             this.dCVoltageSourceToolStripMenuItem.Name = "dCVoltageSourceToolStripMenuItem";
-            this.dCVoltageSourceToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.dCVoltageSourceToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.dCVoltageSourceToolStripMenuItem.Text = "DC Voltage Source";
             this.dCVoltageSourceToolStripMenuItem.Click += new System.EventHandler(this.dCVoltageSourceToolStripMenuItem_Click);
             // 
             // groundToolStripMenuItem
             // 
+            this.groundToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("groundToolStripMenuItem.Image")));
             this.groundToolStripMenuItem.Name = "groundToolStripMenuItem";
-            this.groundToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.groundToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.groundToolStripMenuItem.Text = "Ground";
             this.groundToolStripMenuItem.Click += new System.EventHandler(this.groundToolStripMenuItem_Click);
             // 
+            // capacitorToolStripMenuItem
+            // 
+            this.capacitorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("capacitorToolStripMenuItem.Image")));
+            this.capacitorToolStripMenuItem.Name = "capacitorToolStripMenuItem";
+            this.capacitorToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.capacitorToolStripMenuItem.Text = "Capacitor";
+            this.capacitorToolStripMenuItem.Click += new System.EventHandler(this.capacitorToolStripMenuItem_Click);
+            // 
             // toolStripButton1
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(49, 22);
+            this.toolStripButton1.Text = "Run";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // filesToolStripMenuItem
@@ -136,6 +149,7 @@
             // 
             // newToolStripMenuItem
             // 
+            this.newToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newToolStripMenuItem.Image")));
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newToolStripMenuItem.Text = "New";
@@ -143,6 +157,7 @@
             // 
             // openToolStripMenuItem
             // 
+            this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem.Text = "Open";
@@ -150,6 +165,7 @@
             // 
             // saveToolStripMenuItem
             // 
+            this.saveToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripMenuItem.Image")));
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
@@ -157,6 +173,7 @@
             // 
             // exitToolStripMenuItem
             // 
+            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
@@ -164,13 +181,15 @@
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stopToolStripMenuItem});
+            this.stopToolStripMenuItem,
+            this.resumeToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
             // 
             // stopToolStripMenuItem
             // 
+            this.stopToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("stopToolStripMenuItem.Image")));
             this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
             this.stopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.stopToolStripMenuItem.Text = "Stop";
@@ -201,7 +220,7 @@
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel2,
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 540);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 497);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(984, 22);
             this.statusStrip1.TabIndex = 2;
@@ -210,20 +229,20 @@
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(128, 17);
             this.toolStripStatusLabel3.Text = "toolStripStatusLabel3";
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(733, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(713, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(118, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // Frametime
@@ -234,24 +253,24 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(629, 66);
+            this.textBox1.Location = new System.Drawing.Point(629, 61);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(343, 460);
+            this.textBox1.Size = new System.Drawing.Size(343, 425);
             this.textBox1.TabIndex = 3;
             // 
-            // capacitorToolStripMenuItem
+            // resumeToolStripMenuItem
             // 
-            this.capacitorToolStripMenuItem.Name = "capacitorToolStripMenuItem";
-            this.capacitorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.capacitorToolStripMenuItem.Text = "Capacitor";
-            this.capacitorToolStripMenuItem.Click += new System.EventHandler(this.capacitorToolStripMenuItem_Click);
+            this.resumeToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("resumeToolStripMenuItem.Image")));
+            this.resumeToolStripMenuItem.Name = "resumeToolStripMenuItem";
+            this.resumeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.resumeToolStripMenuItem.Text = "Resume";
             // 
             // Main
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 562);
+            this.ClientSize = new System.Drawing.Size(984, 519);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.toolStrip1);
@@ -301,6 +320,7 @@
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem capacitorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resumeToolStripMenuItem;
 
     }
 }
