@@ -158,12 +158,65 @@ namespace Spice
             Point midpoint = new Point((pt1.X + pt2.X) / 2, (pt1.Y + pt2.Y) / 2);
             Point[] turnpt = new Point[17];
             int i;
+            double angle = 0;
+            double del_X, del_Y;
+            if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
+            {
+                del_X = pt2.X - pt1.X;
+                del_Y = pt2.Y - pt1.Y;
+                angle = Math.Atan2(del_Y, del_X);//unit: arc
+            }
+ 
+            //draw resistor
             if (type == 'r')
             {
-                if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
-                    screen.DrawLine(myPen, pt1, pt2);
                 if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
                     screen.DrawLine(myPen, pt1, pt2);
+                if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
+                {
+                    //設定第0個轉折點
+                    turnpt[0].X = midpoint.X - Convert.ToInt32(16*Math.Cos(angle));
+                    turnpt[0].Y = midpoint.Y - Convert.ToInt32(16*Math.Sin(angle));
+                    turnpt[16].X = midpoint.X + Convert.ToInt32(16 * Math.Cos(angle));
+                    turnpt[16].Y = midpoint.Y + Convert.ToInt32(16 * Math.Sin(angle));
+                    /*
+                    set turnning point*16(1~16)
+                      /\  /\
+                        \/  \/
+                    turnpt[i].X => turnpt[0].X +,- 2*
+                    turnpt[i].Y => turnpt[0].Y + i
+                    */
+                    for (i = 1; i < 16; i++)
+                    {
+                        switch (i % 4)
+                        {
+                            case 0:
+                                turnpt[i].Y = turnpt[0].Y + Convert.ToInt32(2 * i * Math.Sin(angle));
+                                turnpt[i].X = turnpt[0].X + Convert.ToInt32(2 * i * Math.Cos(angle));
+                                break;
+                            case 1:
+                                turnpt[i].X = turnpt[i - 1].X + Convert.ToInt32(Math.Cos(angle) - 6 * Math.Sin(angle));
+                                turnpt[i].Y = turnpt[i - 1].Y + Convert.ToInt32(Math.Sin(angle) + 6 * Math.Cos(angle));
+                                break;
+                            case 2:
+                                turnpt[i].Y = turnpt[0].Y + Convert.ToInt32(2 * i * Math.Sin(angle));
+                                turnpt[i].X = turnpt[0].X + Convert.ToInt32(2 * i * Math.Cos(angle));
+                                break;
+                            case 3:
+                                turnpt[i].X = turnpt[i - 1].X + Convert.ToInt32(Math.Cos(angle) + 6 * Math.Sin(angle));
+                                turnpt[i].Y = turnpt[i - 1].Y + Convert.ToInt32(Math.Sin(angle) - 6 * Math.Cos(angle));
+                                break;
+                            default:
+                                break;
+                        }//end switch
+
+                    }//end for
+                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    for (i = 0; i < 16; i++)
+                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(myPen, turnpt[16], pt2);
+                }
+
 
                 if ((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
                 {
@@ -248,59 +301,253 @@ namespace Spice
                     screen.DrawLine(myPen, turnpt[16], pt2);
                 }//end if
             }
-            if (type == 'w' || type == 'C')
+            //end resistor
+
+            //draw wire
+            if (type == 'w')
                 screen.DrawLine(myPen, pt1, pt2);
+
+
+            //end wire
+
+            //draw capacitor
+            if (type == 'C')
+            {                
+
+                 Point[] capterminal = new Point[8];
+                //when the line is horizontal
+                if ((pt1.Y == pt2.Y) && (pt1.X != pt2.X))
+                {
+                    if (pt1.X > pt2.X)
+                    {
+                        capterminal[6].X = pt1.X;
+                        capterminal[6].Y = pt1.Y;
+                        capterminal[7].X = pt2.X;
+                        capterminal[7].Y = pt2.Y;
+                    }
+                    if (pt1.X < pt2.X)
+                    {
+                        capterminal[6].X = pt2.X;
+                        capterminal[6].Y = pt2.Y;
+                        capterminal[7].X = pt1.X;
+                        capterminal[7].Y = pt1.Y;
+                    }
+                    capterminal[0].X = midpoint.X - 8;
+                    capterminal[0].Y = midpoint.Y;
+                    capterminal[1].X = midpoint.X + 8;
+                    capterminal[1].Y = midpoint.Y;
+                    screen.DrawLine(myPen, capterminal[1], capterminal[6]);
+                    screen.DrawLine(myPen, capterminal[7], capterminal[0]);
+                    //the negative pole(-)
+                    capterminal[2].X = midpoint.X - 8;
+                    capterminal[2].Y = midpoint.Y + 8;
+                    capterminal[3].X = midpoint.X - 8;
+                    capterminal[3].Y = midpoint.Y - 8;
+                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
+                    //the positive pole(+)
+                    capterminal[4].X = midpoint.X + 8;
+                    capterminal[4].Y = midpoint.Y + 8;
+                    capterminal[5].X = midpoint.X + 8;
+                    capterminal[5].Y = midpoint.Y - 8;
+                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                        
+                    
+                }
+                //when the line is vertical
+                if ((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
+                {
+                    if (pt1.Y > pt2.Y)
+                    {
+                        capterminal[6].X = pt1.X;
+                        capterminal[6].Y = pt1.Y;
+                        capterminal[7].X = pt2.X;
+                        capterminal[7].Y = pt2.Y;
+                    }
+                    if (pt1.Y < pt2.Y)
+                    {
+                        capterminal[6].X = pt2.X;
+                        capterminal[6].Y = pt2.Y;
+                        capterminal[7].X = pt1.X;
+                        capterminal[7].Y = pt1.Y;
+                    }
+                    capterminal[0].X = midpoint.X;
+                    capterminal[0].Y = midpoint.Y + 8;
+                    capterminal[1].X = midpoint.X;
+                    capterminal[1].Y = midpoint.Y - 8;
+                    screen.DrawLine(myPen, capterminal[1], capterminal[7]);
+                    screen.DrawLine(myPen, capterminal[6], capterminal[0]);
+                    //the negative pole(-)
+                    capterminal[2].X = midpoint.X + 8;
+                    capterminal[2].Y = midpoint.Y - 8;
+                    capterminal[3].X = midpoint.X - 8;
+                    capterminal[3].Y = midpoint.Y - 8;
+                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
+                    //the positive pole(+)
+                    capterminal[4].X = midpoint.X + 8;
+                    capterminal[4].Y = midpoint.Y + 8;
+                    capterminal[5].X = midpoint.X - 8;
+                    capterminal[5].Y = midpoint.Y + 8;
+                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                }
+               //when the line has a slope
+                if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
+                {
+                    capterminal[6].X = pt2.X;
+                    capterminal[6].Y = pt2.Y;
+                    capterminal[7].X = pt1.X;
+                    capterminal[7].Y = pt1.Y;
+
+                    capterminal[0].X = midpoint.X - Convert.ToInt32(8 * Math.Cos(angle));
+                    capterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
+                    capterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
+                    capterminal[1].Y = midpoint.Y + Convert.ToInt32(8 * Math.Sin(angle));
+                    screen.DrawLine(myPen, capterminal[1], capterminal[6]);
+                    screen.DrawLine(myPen, capterminal[7], capterminal[0]);
+                    //the negative pole(-)
+                    capterminal[2].X = capterminal[0].X - Convert.ToInt32(8 * Math.Sin(angle));
+                    capterminal[2].Y = capterminal[0].Y + Convert.ToInt32(8 * Math.Cos(angle));
+                    capterminal[3].X = capterminal[0].X + Convert.ToInt32(8 * Math.Sin(angle));
+                    capterminal[3].Y = capterminal[0].Y - Convert.ToInt32(8 * Math.Cos(angle));
+                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
+                    //the positive pole(+)
+                    capterminal[4].X = capterminal[1].X - Convert.ToInt32(8 * Math.Sin(angle));
+                    capterminal[4].Y = capterminal[1].Y + Convert.ToInt32(8 * Math.Cos(angle));
+                    capterminal[5].X = capterminal[1].X + Convert.ToInt32(8 * Math.Sin(angle));
+                    capterminal[5].Y = capterminal[1].Y - Convert.ToInt32(8 * Math.Cos(angle));
+                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                }
+                if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
+                    screen.DrawLine(myPen, pt1, pt2);
+            }
+            //end capacitor
+            
+            //draw voltage
             if (type == 'v')
             {
                 Point[] voltterminal = new Point[6];
-                //when the line is vertical
+                //when the line is horizontal
                 if (pt1.Y == pt2.Y)
                 {
-                    voltterminal[0].X = midpoint.X - 8;
-                    voltterminal[0].Y = midpoint.Y;
-                    voltterminal[1].X = midpoint.X + 8;
-                    voltterminal[1].Y = midpoint.Y;
-                    screen.DrawLine(myPen, voltterminal[1], pt2);
-                    screen.DrawLine(myPen, pt1, voltterminal[0]);
-                    //the negative pole(-)
-                    voltterminal[2].X = midpoint.X - 8;
-                    voltterminal[2].Y = midpoint.Y + 4;
-                    voltterminal[3].X = midpoint.X - 8;
-                    voltterminal[3].Y = midpoint.Y - 4;
-                    screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
-                    //the positive pole(+)
-                    voltterminal[4].X = midpoint.X + 8;
-                    voltterminal[4].Y = midpoint.Y + 8;
-                    voltterminal[5].X = midpoint.X + 8;
-                    voltterminal[5].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    if (pt1.X > pt2.X)
+                    {
+                        voltterminal[0].X = midpoint.X - 8;
+                        voltterminal[0].Y = midpoint.Y;
+                        voltterminal[1].X = midpoint.X + 8;
+                        voltterminal[1].Y = midpoint.Y;
+                        screen.DrawLine(myPen, voltterminal[1], pt1);
+                        screen.DrawLine(myPen, pt2, voltterminal[0]);
+                        //the negative pole(-)
+                        voltterminal[2].X = midpoint.X - 8;
+                        voltterminal[2].Y = midpoint.Y + 4;
+                        voltterminal[3].X = midpoint.X - 8;
+                        voltterminal[3].Y = midpoint.Y - 4;
+                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        //the positive pole(+)
+                        voltterminal[4].X = midpoint.X + 8;
+                        voltterminal[4].Y = midpoint.Y + 8;
+                        voltterminal[5].X = midpoint.X + 8;
+                        voltterminal[5].Y = midpoint.Y - 8;
+                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+
+                    }
+                    if (pt1.X < pt2.X)
+                    {
+                        voltterminal[0].X = midpoint.X - 8;
+                        voltterminal[0].Y = midpoint.Y;
+                        voltterminal[1].X = midpoint.X + 8;
+                        voltterminal[1].Y = midpoint.Y;
+                        screen.DrawLine(myPen, voltterminal[1], pt2);
+                        screen.DrawLine(myPen, pt1, voltterminal[0]);
+                        //the negative pole(-)
+                        voltterminal[2].X = midpoint.X + 8;
+                        voltterminal[2].Y = midpoint.Y + 4;
+                        voltterminal[3].X = midpoint.X + 8;
+                        voltterminal[3].Y = midpoint.Y - 4;
+                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        //the positive pole(+)
+                        voltterminal[4].X = midpoint.X - 8;
+                        voltterminal[4].Y = midpoint.Y + 8;
+                        voltterminal[5].X = midpoint.X - 8;
+                        voltterminal[5].Y = midpoint.Y - 8;
+                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    }
                 }
-                //when the line is horizontal
+                //when the line is vertical
                 if (pt1.X == pt2.X)
                 {
-                    voltterminal[0].X = midpoint.X;
-                    voltterminal[0].Y = midpoint.Y - 8;
-                    voltterminal[1].X = midpoint.X;
-                    voltterminal[1].Y = midpoint.Y + 8;
-                    screen.DrawLine(myPen, voltterminal[1], pt2);
-                    screen.DrawLine(myPen, pt1, voltterminal[0]);
-                    //the negative pole(-)
-                    voltterminal[2].X = midpoint.X + 4;
-                    voltterminal[2].Y = midpoint.Y - 8;
-                    voltterminal[3].X = midpoint.X - 4;
-                    voltterminal[3].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
-                    //the positive pole(+)
-                    voltterminal[4].X = midpoint.X + 8;
-                    voltterminal[4].Y = midpoint.Y + 8;
-                    voltterminal[5].X = midpoint.X - 8;
-                    voltterminal[5].Y = midpoint.Y + 8;
-                    screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    if (pt1.Y < pt2.Y)
+                    {
+                        voltterminal[0].X = midpoint.X;
+                        voltterminal[0].Y = midpoint.Y - 8;
+                        voltterminal[1].X = midpoint.X;
+                        voltterminal[1].Y = midpoint.Y + 8;
+                        screen.DrawLine(myPen, voltterminal[1], pt2);
+                        screen.DrawLine(myPen, pt1, voltterminal[0]);
+                        //the negative pole(-)
+                        voltterminal[2].X = midpoint.X + 4;
+                        voltterminal[2].Y = midpoint.Y + 8;
+                        voltterminal[3].X = midpoint.X - 4;
+                        voltterminal[3].Y = midpoint.Y + 8;
+                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        //the positive pole(+)
+                        voltterminal[4].X = midpoint.X + 8;
+                        voltterminal[4].Y = midpoint.Y - 8;
+                        voltterminal[5].X = midpoint.X - 8;
+                        voltterminal[5].Y = midpoint.Y - 8;
+                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    }
+                    if (pt1.Y > pt2.Y)
+                    {
+                        voltterminal[0].X = midpoint.X;
+                        voltterminal[0].Y = midpoint.Y - 8;
+                        voltterminal[1].X = midpoint.X;
+                        voltterminal[1].Y = midpoint.Y + 8;
+                        screen.DrawLine(myPen, voltterminal[1], pt1);
+                        screen.DrawLine(myPen, pt2, voltterminal[0]);
+                        //the negative pole(-)
+                        voltterminal[2].X = midpoint.X + 4;
+                        voltterminal[2].Y = midpoint.Y - 8;
+                        voltterminal[3].X = midpoint.X - 4;
+                        voltterminal[3].Y = midpoint.Y - 8;
+                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        //the positive pole(+)
+                        voltterminal[4].X = midpoint.X + 8;
+                        voltterminal[4].Y = midpoint.Y + 8;
+                        voltterminal[5].X = midpoint.X - 8;
+                        voltterminal[5].Y = midpoint.Y + 8;
+                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    }
+                    
                 }
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
+                {
+   
+                    voltterminal[0].X = midpoint.X - Convert.ToInt32(8 * Math.Cos(angle));
+                    voltterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
+                    voltterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
+                    voltterminal[1].Y = midpoint.Y + Convert.ToInt32(8 * Math.Sin(angle));
+                    screen.DrawLine(myPen, voltterminal[1], pt2);
+                    screen.DrawLine(myPen, pt1, voltterminal[0]);
+                    //the positive pole(+)
+                    voltterminal[2].X = voltterminal[0].X - Convert.ToInt32(8 * Math.Sin(angle));
+                    voltterminal[2].Y = voltterminal[0].Y + Convert.ToInt32(8 * Math.Cos(angle));
+                    voltterminal[3].X = voltterminal[0].X + Convert.ToInt32(8 * Math.Sin(angle));
+                    voltterminal[3].Y = voltterminal[0].Y - Convert.ToInt32(8 * Math.Cos(angle));
+                    screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                    //the negative pole(-)
+                    voltterminal[4].X = voltterminal[1].X - Convert.ToInt32(4 * Math.Sin(angle));
+                    voltterminal[4].Y = voltterminal[1].Y + Convert.ToInt32(4 * Math.Cos(angle));
+                    voltterminal[5].X = voltterminal[1].X + Convert.ToInt32(4 * Math.Sin(angle));
+                    voltterminal[5].Y = voltterminal[1].Y - Convert.ToInt32(4 * Math.Cos(angle));
+                    screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                }
+                if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
                     screen.DrawLine(myPen, pt1, pt2);
             }
+            //end voltage
 
+
+            //draw ground 
             if (type == 'g')
             {
                 Point[] gndterminal = new Point[6];
@@ -324,20 +571,12 @@ namespace Spice
                 gndterminal[5].X = pt2.X - 2;
                 screen.DrawLine(myPen, gndterminal[4], gndterminal[5]);
             }
+            //end ground
 
             if (type != 'w' && type != 'g') screen.DrawString(type.ToString() + characteristic.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint + new Size(10, 0));
         }
 
-        /*      public void turningpoint(Point startpoint[])
-               {
-                   startpoint[0].X - 2;
-                   startpoint[0].Y + 1;
-                   startpoint[0].X + 2;
-                   startpoint[0].Y + 3;
-                   startpoint[0].X;
-                   startpoint[0].Y + 4;
-               }
-        */
+ 
         public void setCurrent(int x, double c)
         {
             if (type != 'g') current = c;
