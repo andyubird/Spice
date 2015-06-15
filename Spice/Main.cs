@@ -35,6 +35,8 @@ namespace Spice
         Point temppoint;
         bool _mousePressed;
 
+        Scope vScope, iScope;
+
         char tool = 'w';
 
         public Main()
@@ -91,6 +93,14 @@ namespace Spice
             {
                 textBox1.Text += elm.getCurrent().ToString() + " ";
             }
+
+            if (iScope != null && vScope !=null)
+            {
+                iScope.step(0);
+                iScope.draw(screen);
+                vScope.step(1);
+                vScope.draw(screen);
+            }
         }
 
         private void Frametime_Tick(object sender, EventArgs e)
@@ -98,7 +108,7 @@ namespace Spice
             this.Invalidate();
         }
 
-        private double getIterCount() {	return .1*Math.Exp((100-61)/24); }
+        private double getIterCount() { return .1 * Math.Exp((100 - 61) / 24); }
 
         private void analyze()
         {
@@ -1112,9 +1122,17 @@ namespace Spice
                 {
                     if (elmList[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
                     {
-                        elmList.RemoveAt(i);
-                        needAnalyze();
-                        return;
+                        if ((ModifierKeys & Keys.Control) == Keys.Control)
+                        {
+                            vScope = new Scope(elmList[i], new Rectangle(40, 400, 500, 50));
+                            iScope = new Scope(elmList[i], new Rectangle(40, 470, 500, 50));
+                        }
+                        else
+                        {
+                            elmList.RemoveAt(i);
+                            needAnalyze();
+                            return;
+                        }
                     }
                 }
                 temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
@@ -1534,10 +1552,5 @@ namespace Spice
                 return false;
             }
         }
-
-       
-
-
-
     }
 }

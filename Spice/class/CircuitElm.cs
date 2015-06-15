@@ -33,7 +33,7 @@ namespace Spice
         public double[] volts;
         public double current, curcount;
         public int voltSource;
-        public double voltdiff, compResistance;
+        public double voltdiff = 0, compResistance;
 
         public char type = 'w';
 
@@ -78,7 +78,7 @@ namespace Spice
         {
             volts[n] = c;
             calculateCurrent();
-            if (type == 'C') voltdiff = volts[0] - volts[1];
+            voltdiff = volts[0] - volts[1];
         }
 
         public void stamp(Main sim)
@@ -105,9 +105,10 @@ namespace Spice
         void calculateCurrent()
         {
             if (type == 'r') current = (volts[0] - volts[1]) / characteristic;
+            voltdiff = volts[0] - volts[1];
             if (type == 'C')
             {
-                double voltdiff = volts[0] - volts[1];
+                voltdiff = volts[0] - volts[1];
                 // we check compResistance because this might get called
                 // before stamp(), which sets compResistance, causing
                 // infinite current
