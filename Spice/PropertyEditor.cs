@@ -28,7 +28,7 @@ namespace Spice
                 Controls.Add(r);
 
                 r.TextChanged += delegate
-                { if(r.Text!=String.Empty) elm.characteristic = Convert.ToInt32(r.Text); };
+                { if(r.Text!=String.Empty) elm.characteristic = (float)Convert.ToDouble(r.Text); };
             }
         }
     }

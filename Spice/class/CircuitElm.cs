@@ -6,8 +6,10 @@ using System.Drawing;
 
 namespace Spice
 {
+    
     public class CircuitElm
     {
+        static int voltrange = 5;
         private int roundto(int a, int b)
         {
             int forward = b;
@@ -171,7 +173,7 @@ namespace Spice
             if (type == 'r')
             {
                 if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
-                    screen.DrawLine(myPen, pt1, pt2);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), pt1, pt2);
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                 {
                     //設定第0個轉折點
@@ -211,10 +213,10 @@ namespace Spice
                         }//end switch
 
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[16], pt2);
                 }
 
 
@@ -252,12 +254,12 @@ namespace Spice
                             default:
                                 break;
                         }//end switch
-
+                        
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[16], pt2);
                 }//end if
                 if ((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
                 {
@@ -295,10 +297,10 @@ namespace Spice
                         }//end switch
 
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(new Pen(Color.FromArgb(127 - (int)volts[0] / voltrange * 127, 127 + (int)volts[0] / voltrange * 128, 127 - (int)volts[0] / voltrange * 127)), turnpt[16], pt2);
                 }//end if
             }
             //end resistor
