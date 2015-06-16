@@ -442,8 +442,8 @@ namespace Spice
                         capterminal[6].Y = pt1.Y;
                         capterminal[7].X = pt2.X;
                         capterminal[7].Y = pt2.Y;
-                        screen.DrawLine(p1pen, capterminal[1], capterminal[7]);
-                        screen.DrawLine(p2pen, capterminal[6], capterminal[0]);
+                        screen.DrawLine(p2pen, capterminal[1], capterminal[7]);
+                        screen.DrawLine(p1pen, capterminal[6], capterminal[0]);
                     }
                     if (pt1.Y < pt2.Y)
                     {
@@ -451,8 +451,8 @@ namespace Spice
                         capterminal[6].Y = pt2.Y;
                         capterminal[7].X = pt1.X;
                         capterminal[7].Y = pt1.Y;
-                        screen.DrawLine(p2pen, capterminal[1], capterminal[7]);
-                        screen.DrawLine(p1pen, capterminal[6], capterminal[0]);
+                        screen.DrawLine(p1pen, capterminal[1], capterminal[7]);
+                        screen.DrawLine(p2pen, capterminal[6], capterminal[0]);
                     }
 
 
