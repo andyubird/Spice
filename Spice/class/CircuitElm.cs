@@ -34,7 +34,7 @@ namespace Spice
         public double[] volts;
         public double current, curcount;
         public int voltSource;
-        public double voltdiff, compResistance;
+        public double voltdiff = 0, compResistance;
 
         public char type = 'w';
 

@@ -51,6 +51,7 @@
     <Compile Include="class\CircuitNodeLink.cs" />
     <Compile Include="class\ResistorElm.cs" />
     <Compile Include="class\RowInfo.cs" />
+    <Compile Include="class\Scope.cs" />
     <Compile Include="class\Terminal.cs" />
     <Compile Include="class\NodeElm.cs" />
     <Compile Include="Main.cs">
