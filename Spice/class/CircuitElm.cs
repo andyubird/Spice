@@ -278,10 +278,21 @@ namespace Spice
                         }//end switch
                         
                     }//end for
-                    screen.DrawLine(p1pen, pt1, turnpt[0]);
+                    
                     for (i = 0; i < 16; i++)
                         screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(p2pen, turnpt[16], pt2);
+                    if (pt1.Y > pt2.Y)
+                    {
+                        screen.DrawLine(p1pen, pt1, turnpt[16]);
+                        screen.DrawLine(p2pen, turnpt[0], pt2);
+                    }
+                    if (pt1.Y < pt2.Y)
+                    {
+                        screen.DrawLine(p1pen, pt1, turnpt[0]);
+                        screen.DrawLine(p2pen, turnpt[16], pt2);
+                    }
+
+
                 }//end if
                 if ((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
                 {
@@ -319,17 +330,27 @@ namespace Spice
                         }//end switch
 
                     }//end for
-                    screen.DrawLine(p1pen, pt1, turnpt[0]);
+ 
                     for (i = 0; i < 16; i++)
                         screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(p2pen, turnpt[16], pt2);
+                    if (pt1.X > pt2.X)
+                    {
+                        screen.DrawLine(p1pen, pt1, turnpt[16]);
+                        screen.DrawLine(p2pen, turnpt[0], pt2);
+                    }
+                    if (pt1.X < pt2.X)
+                    {
+                        screen.DrawLine(p1pen, pt1, turnpt[0]);
+                        screen.DrawLine(p2pen, turnpt[16], pt2);
+                    }
+
                 }//end if
             }
             //end resistor
 
             //draw wire
             if (type == 'w')
-                screen.DrawLine(myPen, pt1, pt2);
+                screen.DrawLine(p1pen, pt1, pt2);
 
 
             //end wire
@@ -339,15 +360,26 @@ namespace Spice
             {                
 
                  Point[] capterminal = new Point[8];
+                // draw two side of the cap
+
+                //draw the middle of the cap
+
+
                 //when the line is horizontal
                 if ((pt1.Y == pt2.Y) && (pt1.X != pt2.X))
                 {
+                    capterminal[0].X = midpoint.X - 8;
+                    capterminal[0].Y = midpoint.Y;
+                    capterminal[1].X = midpoint.X + 8;
+                    capterminal[1].Y = midpoint.Y;
                     if (pt1.X > pt2.X)
                     {
                         capterminal[6].X = pt1.X;
                         capterminal[6].Y = pt1.Y;
                         capterminal[7].X = pt2.X;
                         capterminal[7].Y = pt2.Y;
+                        screen.DrawLine(p1pen, capterminal[1], capterminal[6]);
+                        screen.DrawLine(p2pen, capterminal[7], capterminal[0]);
                     }
                     if (pt1.X < pt2.X)
                     {
@@ -355,6 +387,8 @@ namespace Spice
                         capterminal[6].Y = pt2.Y;
                         capterminal[7].X = pt1.X;
                         capterminal[7].Y = pt1.Y;
+                        screen.DrawLine(p2pen, capterminal[1], capterminal[6]);
+                        screen.DrawLine(p1pen, capterminal[7], capterminal[0]);
                     }
                     capterminal[0].X = midpoint.X - 8;
                     capterminal[0].Y = midpoint.Y;
@@ -367,25 +401,41 @@ namespace Spice
                     capterminal[2].Y = midpoint.Y + 8;
                     capterminal[3].X = midpoint.X - 8;
                     capterminal[3].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
-                    //the positive pole(+)
+
+                        
+                    //the positive pole(+)(in the right side)
                     capterminal[4].X = midpoint.X + 8;
                     capterminal[4].Y = midpoint.Y + 8;
                     capterminal[5].X = midpoint.X + 8;
                     capterminal[5].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                    if (pt1.X > pt2.X)
+                    {
+                        screen.DrawLine(p2pen, capterminal[2], capterminal[3]);//(L)
+                        screen.DrawLine(p1pen, capterminal[4], capterminal[5]);//(R)
+                    }
+                    if (pt1.X < pt2.X)
+                    {
+                        screen.DrawLine(p1pen, capterminal[2], capterminal[3]);//(L)
+                        screen.DrawLine(p2pen, capterminal[4], capterminal[5]);//(R)
+                    }
                         
                     
                 }
                 //when the line is vertical
                 if ((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
                 {
+                    capterminal[0].X = midpoint.X;
+                    capterminal[0].Y = midpoint.Y + 8;
+                    capterminal[1].X = midpoint.X;
+                    capterminal[1].Y = midpoint.Y - 8;
                     if (pt1.Y > pt2.Y)
                     {
                         capterminal[6].X = pt1.X;
                         capterminal[6].Y = pt1.Y;
                         capterminal[7].X = pt2.X;
                         capterminal[7].Y = pt2.Y;
+                        screen.DrawLine(p1pen, capterminal[1], capterminal[7]);
+                        screen.DrawLine(p2pen, capterminal[6], capterminal[0]);
                     }
                     if (pt1.Y < pt2.Y)
                     {
@@ -393,25 +443,32 @@ namespace Spice
                         capterminal[6].Y = pt2.Y;
                         capterminal[7].X = pt1.X;
                         capterminal[7].Y = pt1.Y;
+                        screen.DrawLine(p2pen, capterminal[1], capterminal[7]);
+                        screen.DrawLine(p1pen, capterminal[6], capterminal[0]);
                     }
-                    capterminal[0].X = midpoint.X;
-                    capterminal[0].Y = midpoint.Y + 8;
-                    capterminal[1].X = midpoint.X;
-                    capterminal[1].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, capterminal[1], capterminal[7]);
-                    screen.DrawLine(myPen, capterminal[6], capterminal[0]);
-                    //the negative pole(-)
+
+
+                    //the negative pole(-)(in lower side)
                     capterminal[2].X = midpoint.X + 8;
                     capterminal[2].Y = midpoint.Y - 8;
                     capterminal[3].X = midpoint.X - 8;
                     capterminal[3].Y = midpoint.Y - 8;
-                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
-                    //the positive pole(+)
+
+                    //the positive pole(+)(in the upper side)
                     capterminal[4].X = midpoint.X + 8;
                     capterminal[4].Y = midpoint.Y + 8;
                     capterminal[5].X = midpoint.X - 8;
                     capterminal[5].Y = midpoint.Y + 8;
-                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                    if (pt1.Y < pt2.Y)
+                    {
+                        screen.DrawLine(p1pen, capterminal[2], capterminal[3]);//(L)
+                        screen.DrawLine(p2pen, capterminal[4], capterminal[5]);//(U)
+                    }
+                    if (pt1.Y > pt2.Y)
+                    {
+                        screen.DrawLine(p2pen, capterminal[2], capterminal[3]);
+                        screen.DrawLine(p1pen, capterminal[4], capterminal[5]);
+                    }
                 }
                //when the line has a slope
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
@@ -425,20 +482,20 @@ namespace Spice
                     capterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
                     capterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
                     capterminal[1].Y = midpoint.Y + Convert.ToInt32(8 * Math.Sin(angle));
-                    screen.DrawLine(myPen, capterminal[1], capterminal[6]);
-                    screen.DrawLine(myPen, capterminal[7], capterminal[0]);
+                    screen.DrawLine(p2pen, capterminal[1], capterminal[6]);
+                    screen.DrawLine(p1pen, capterminal[7], capterminal[0]);
                     //the negative pole(-)
                     capterminal[2].X = capterminal[0].X - Convert.ToInt32(8 * Math.Sin(angle));
                     capterminal[2].Y = capterminal[0].Y + Convert.ToInt32(8 * Math.Cos(angle));
                     capterminal[3].X = capterminal[0].X + Convert.ToInt32(8 * Math.Sin(angle));
                     capterminal[3].Y = capterminal[0].Y - Convert.ToInt32(8 * Math.Cos(angle));
-                    screen.DrawLine(myPen, capterminal[2], capterminal[3]);
+                    screen.DrawLine(p1pen, capterminal[2], capterminal[3]);
                     //the positive pole(+)
                     capterminal[4].X = capterminal[1].X - Convert.ToInt32(8 * Math.Sin(angle));
                     capterminal[4].Y = capterminal[1].Y + Convert.ToInt32(8 * Math.Cos(angle));
                     capterminal[5].X = capterminal[1].X + Convert.ToInt32(8 * Math.Sin(angle));
                     capterminal[5].Y = capterminal[1].Y - Convert.ToInt32(8 * Math.Cos(angle));
-                    screen.DrawLine(myPen, capterminal[4], capterminal[5]);
+                    screen.DrawLine(p2pen, capterminal[4], capterminal[5]);
                 }
                 if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
                     screen.DrawLine(myPen, pt1, pt2);
@@ -550,8 +607,8 @@ namespace Spice
                     voltterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
                     voltterminal[1].Y = midpoint.Y + Convert.ToInt32(8 * Math.Sin(angle));
-                    screen.DrawLine(p1pen, voltterminal[1], pt2);
-                    screen.DrawLine(p2pen, pt1, voltterminal[0]);
+                    screen.DrawLine(p2pen, voltterminal[1], pt2);
+                    screen.DrawLine(p1pen, pt1, voltterminal[0]);
                     //the positive pole(+)
                     voltterminal[2].X = voltterminal[0].X - Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[2].Y = voltterminal[0].Y + Convert.ToInt32(8 * Math.Cos(angle));
