@@ -6,11 +6,11 @@ using System.Drawing;
 
 namespace Spice
 {
-    
+
     public class CircuitElm
     {
-        
-        
+
+
         private int roundto(int a, int b)
         {
             int forward = b;
@@ -44,7 +44,7 @@ namespace Spice
 
         public Pen myPen = new Pen(Color.DarkGray, 2);
 
-       
+
         public Point pt1;
         public Point pt2;
 
@@ -86,7 +86,7 @@ namespace Spice
 
         public void stamp(Main sim)
         {
-            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, characteristic);
+            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, -characteristic);
             if (type == 'w') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
             if (type == 'g') sim.stampVoltageSource(0, nodes[0], voltSource, 0);
             if (type == 'r') sim.stampResistor(nodes[0], nodes[1], characteristic);
@@ -156,30 +156,43 @@ namespace Spice
             pt2.Y = roundto(a, pt2.Y);
         }
         static int voltrange = 5;
-        
+
         public void draw(Graphics screen)
         {
             Pen p1pen;
             Pen pmidpen;
             Pen p2pen;
 
-                if (bound == true)
-                {
-                    p1pen = new Pen(Color.Yellow, 2);
-                    pmidpen = new Pen(Color.Yellow, 2);
-                    p2pen = new Pen(Color.Yellow, 2);
-                }
-                else
-                {
-                    //p2pen = new Pen(Color.FromArgb(127 + (int)volts[0] * 128 / voltrange, 127 - (int)volts[0] * 127 / voltrange, 127 + (int)volts[0] * 128 / voltrange), 2);
-                   // pmidpen = new Pen(Color.FromArgb(127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange), 127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange), 127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange)), 2);
-                    //p1pen = new Pen(Color.FromArgb(127 + (int)volts[1] * 128 / voltrange, 127 - (int)volts[1] * 127 / voltrange, 127 + (int)volts[1] * 128 / voltrange), 2);
+            int change1 = 0, changemid = 0, change2 = 0;
 
-                   
-                    p2pen = new Pen(Color.FromArgb(127 - (int)volts[0] * 127 / voltrange, 127 +(int)volts[0] * 128 / voltrange, 127 - (int)volts[0] * 127 / voltrange), 2);
-                    pmidpen = new Pen(Color.FromArgb(127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange), 127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange), 127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange)), 2);
-                    p1pen = new Pen(Color.FromArgb(127 - (int)volts[1] * 127 / voltrange, 127 + (int)volts[1] * 128 / voltrange, 127 - (int)volts[1] * 127 / voltrange), 2);
+            if (bound == true)
+            {
+                p1pen = new Pen(Color.White, 2);
+                pmidpen = new Pen(Color.White, 2);
+                p2pen = new Pen(Color.White, 2);
+            }
+            else
+            {
+                if (type != 'g')
+                {
+                    change1 = (int)(volts[0] * 127 / voltrange);
+                    changemid = (int)((volts[0] + volts[1]) * 127 / (2 * voltrange));
+                    change2 = (int)(volts[1] * 127 / voltrange);
+
+                    if (change1 > 127) change1 = 127;
+                    if (changemid > 127) changemid = 127;
+                    if (change2 > 127) change2 = 127;
+                    if (change1 < -127) change1 = -127;
+                    if (changemid < -127) changemid = -127;
+                    if (change2 < -127) change2 = -127;
                 }
+
+                p1pen = new Pen(Color.FromArgb(127 + Math.Abs(change1), 127 + change1, 127 - Math.Abs(change1)), 2);
+                pmidpen = new Pen(Color.FromArgb(127 + Math.Abs(changemid), 127 + changemid, 127 - Math.Abs(changemid)), 2);
+                p2pen = new Pen(Color.FromArgb(127 + Math.Abs(change2), 127 + change2, 127 - Math.Abs(change2)), 2);
+            }
+
+
             Point midpoint = new Point((pt1.X + pt2.X) / 2, (pt1.Y + pt2.Y) / 2);
             Point[] turnpt = new Point[17];
             int i;
@@ -191,7 +204,7 @@ namespace Spice
                 del_Y = pt2.Y - pt1.Y;
                 angle = Math.Atan2(del_Y, del_X);//unit: arc
             }
- 
+
             //draw resistor
             if (type == 'r')
             {
@@ -200,8 +213,8 @@ namespace Spice
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                 {
                     //設定第0個轉折點
-                    turnpt[0].X = midpoint.X - Convert.ToInt32(16*Math.Cos(angle));
-                    turnpt[0].Y = midpoint.Y - Convert.ToInt32(16*Math.Sin(angle));
+                    turnpt[0].X = midpoint.X - Convert.ToInt32(16 * Math.Cos(angle));
+                    turnpt[0].Y = midpoint.Y - Convert.ToInt32(16 * Math.Sin(angle));
                     turnpt[16].X = midpoint.X + Convert.ToInt32(16 * Math.Cos(angle));
                     turnpt[16].Y = midpoint.Y + Convert.ToInt32(16 * Math.Sin(angle));
                     /*
@@ -277,9 +290,9 @@ namespace Spice
                             default:
                                 break;
                         }//end switch
-                        
+
                     }//end for
-                    
+
                     for (i = 0; i < 16; i++)
                         screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
                     if (pt1.Y > pt2.Y)
@@ -331,7 +344,7 @@ namespace Spice
                         }//end switch
 
                     }//end for
- 
+
                     for (i = 0; i < 16; i++)
                         screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
                     if (pt1.X > pt2.X)
@@ -351,16 +364,16 @@ namespace Spice
 
             //draw wire
             if (type == 'w')
-                screen.DrawLine(p2pen, pt1, pt2);
+                screen.DrawLine(p1pen, pt1, pt2);
 
 
             //end wire
 
             //draw capacitor
             if (type == 'C')
-            {                
+            {
 
-                 Point[] capterminal = new Point[8];
+                Point[] capterminal = new Point[8];
                 // draw two side of the cap
 
                 //draw the middle of the cap
@@ -397,7 +410,7 @@ namespace Spice
                     capterminal[3].X = midpoint.X - 8;
                     capterminal[3].Y = midpoint.Y - 8;
 
-                        
+
                     //the positive pole(+)(in the right side)
                     capterminal[4].X = midpoint.X + 8;
                     capterminal[4].Y = midpoint.Y + 8;
@@ -413,8 +426,8 @@ namespace Spice
                         screen.DrawLine(p1pen, capterminal[2], capterminal[3]);//(L)
                         screen.DrawLine(p2pen, capterminal[4], capterminal[5]);//(R)
                     }
-                        
-                    
+
+
                 }
                 //when the line is vertical
                 if ((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
@@ -465,7 +478,7 @@ namespace Spice
                         screen.DrawLine(p1pen, capterminal[4], capterminal[5]);
                     }
                 }
-               //when the line has a slope
+                //when the line has a slope
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                 {
                     capterminal[6].X = pt2.X;
@@ -497,142 +510,142 @@ namespace Spice
             }
             //end capacitor
 
-            
-/*
-            //draw inductor
-            if (type == 'C')
-            {
-                Point[] inductor = new Point[15];
 
-                if((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
-                {
-                    screen.DrawLine(myPen, pt1, pt2);
-                }
+            /*
+                        //draw inductor
+                        if (type == 'C')
+                        {
+                            Point[] inductor = new Point[15];
+
+                            if((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
+                            {
+                                screen.DrawLine(myPen, pt1, pt2);
+                            }
 
 
-                //vertical
-                if((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
-                {
-                    if (pt1.Y > pt2.Y)
-                    {
-                        inductor[0].X = midpoint.X;  
-                        inductor[0].Y = midpoint.Y + 16; 
-                        inductor[1].X = midpoint.X; 
-                        inductor[1].Y = midpoint.Y - 16;
-                        inductor[5] = inductor[1];
-                    } 
+                            //vertical
+                            if((pt1.X == pt2.X) && (pt1.Y != pt2.Y))
+                            {
+                                if (pt1.Y > pt2.Y)
+                                {
+                                    inductor[0].X = midpoint.X;  
+                                    inductor[0].Y = midpoint.Y + 16; 
+                                    inductor[1].X = midpoint.X; 
+                                    inductor[1].Y = midpoint.Y - 16;
+                                    inductor[5] = inductor[1];
+                                } 
 
-                    if(pt1.Y < pt2.Y)
-                    {
-                        inductor[0].X = midpoint.X; 
-                        inductor[0].Y = midpoint.Y - 16; 
-                        inductor[1].X = midpoint.X;
-                        inductor[1].Y = midpoint.Y + 16;
-                        inductor[5]= inductor[0];
+                                if(pt1.Y < pt2.Y)
+                                {
+                                    inductor[0].X = midpoint.X; 
+                                    inductor[0].Y = midpoint.Y - 16; 
+                                    inductor[1].X = midpoint.X;
+                                    inductor[1].Y = midpoint.Y + 16;
+                                    inductor[5]= inductor[0];
 
-                    }
+                                }
 
-                    screen.DrawLine(p1pen, pt1, inductor[0]);
-                    screen.DrawLine(p2pen, pt2, inductor[1]);
-                    //inductor[5] is the startpt of the mount
-                    //draw the first mount
-                    inductor[2].X = inductor[5].X + 13;
-                    inductor[2].Y = inductor[5].Y + 1;
-                    inductor[3].X = inductor[5].X + 13;
-                    inductor[3].Y = inductor[5].Y + 7;
-                    inductor[4].X = inductor[5].X - 2;
-                    inductor[4].Y = inductor[5].Y + 8;
-                    screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
-                    for (i = 0; i < 3; i++)
-                    {
-                        //shift 8 pixel
-                        inductor[5].Y += 8;
-                        inductor[2].Y += 8;
-                        inductor[3].Y += 8;
-                        inductor[4].Y += 8;
-                        screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
-                    }
-                }
+                                screen.DrawLine(p1pen, pt1, inductor[0]);
+                                screen.DrawLine(p2pen, pt2, inductor[1]);
+                                //inductor[5] is the startpt of the mount
+                                //draw the first mount
+                                inductor[2].X = inductor[5].X + 13;
+                                inductor[2].Y = inductor[5].Y + 1;
+                                inductor[3].X = inductor[5].X + 13;
+                                inductor[3].Y = inductor[5].Y + 7;
+                                inductor[4].X = inductor[5].X - 2;
+                                inductor[4].Y = inductor[5].Y + 8;
+                                screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
+                                for (i = 0; i < 3; i++)
+                                {
+                                    //shift 8 pixel
+                                    inductor[5].Y += 8;
+                                    inductor[2].Y += 8;
+                                    inductor[3].Y += 8;
+                                    inductor[4].Y += 8;
+                                    screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
+                                }
+                            }
 
-                //horizontal
-                if((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
-                {
-                    if (pt1.X > pt2.X)
-                    {
-                        inductor[0].X = midpoint.X + 16;
-                        inductor[0].Y = midpoint.Y;
-                        inductor[1].X = midpoint.X - 16;
-                        inductor[1].Y = midpoint.Y;
-                        inductor[5] = inductor[1];
-                    }
+                            //horizontal
+                            if((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
+                            {
+                                if (pt1.X > pt2.X)
+                                {
+                                    inductor[0].X = midpoint.X + 16;
+                                    inductor[0].Y = midpoint.Y;
+                                    inductor[1].X = midpoint.X - 16;
+                                    inductor[1].Y = midpoint.Y;
+                                    inductor[5] = inductor[1];
+                                }
 
-                    if (pt1.X < pt2.X)
-                    {
-                        inductor[0].X = midpoint.X - 16;
-                        inductor[0].Y = midpoint.Y;
-                        inductor[1].X = midpoint.X + 16;
-                        inductor[1].Y = midpoint.Y;
-                        inductor[5] = inductor[0];
-                    }
+                                if (pt1.X < pt2.X)
+                                {
+                                    inductor[0].X = midpoint.X - 16;
+                                    inductor[0].Y = midpoint.Y;
+                                    inductor[1].X = midpoint.X + 16;
+                                    inductor[1].Y = midpoint.Y;
+                                    inductor[5] = inductor[0];
+                                }
 
-                    screen.DrawLine(p1pen, pt1, inductor[0]);
-                    screen.DrawLine(p2pen, pt2, inductor[1]);
-                    //inductor[5] is the startpt of the mount
-                    //draw the first mount
-                    inductor[2].X = inductor[5].X + 1;
-                    inductor[2].Y = inductor[5].Y - 13;
-                    inductor[3].X = inductor[5].X + 7;
-                    inductor[3].Y = inductor[5].Y - 13;
-                    inductor[4].X = inductor[5].X + 8;
-                    inductor[4].Y = inductor[5].Y + 1;
-                    screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
-                    for (i = 0; i < 3; i++)
-                    {
-                        //shift 8 pixel
-                        inductor[5].X += 8;
-                        inductor[2].X += 8;
-                        inductor[3].X += 8;
-                        inductor[4].X += 8;
-                        screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
-                    }
-                }
+                                screen.DrawLine(p1pen, pt1, inductor[0]);
+                                screen.DrawLine(p2pen, pt2, inductor[1]);
+                                //inductor[5] is the startpt of the mount
+                                //draw the first mount
+                                inductor[2].X = inductor[5].X + 1;
+                                inductor[2].Y = inductor[5].Y - 13;
+                                inductor[3].X = inductor[5].X + 7;
+                                inductor[3].Y = inductor[5].Y - 13;
+                                inductor[4].X = inductor[5].X + 8;
+                                inductor[4].Y = inductor[5].Y + 1;
+                                screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
+                                for (i = 0; i < 3; i++)
+                                {
+                                    //shift 8 pixel
+                                    inductor[5].X += 8;
+                                    inductor[2].X += 8;
+                                    inductor[3].X += 8;
+                                    inductor[4].X += 8;
+                                    screen.DrawBezier(pmidpen, inductor[5], inductor[2], inductor[3], inductor[4]);
+                                }
+                            }
 
-                //has a slope
-                if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
-                {
-                    inductor[0].X = midpoint.X - Convert.ToInt32(16 * Math.Cos(angle));
-                    inductor[0].Y = midpoint.Y - Convert.ToInt32(16 * Math.Sin(angle));
-                    inductor[1].X = midpoint.X + Convert.ToInt32(16 * Math.Cos(angle));
-                    inductor[1].Y = midpoint.Y + Convert.ToInt32(16 * Math.Sin(angle));
-                    screen.DrawLine(p1pen, pt1, inductor[0]);
-                    screen.DrawLine(p2pen, pt2, inductor[1]);
+                            //has a slope
+                            if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
+                            {
+                                inductor[0].X = midpoint.X - Convert.ToInt32(16 * Math.Cos(angle));
+                                inductor[0].Y = midpoint.Y - Convert.ToInt32(16 * Math.Sin(angle));
+                                inductor[1].X = midpoint.X + Convert.ToInt32(16 * Math.Cos(angle));
+                                inductor[1].Y = midpoint.Y + Convert.ToInt32(16 * Math.Sin(angle));
+                                screen.DrawLine(p1pen, pt1, inductor[0]);
+                                screen.DrawLine(p2pen, pt2, inductor[1]);
 
-                    //inductor[5] is the start point of the mount
-                    //draw the first mount
-                    inductor[2].X = inductor[0].X + Convert.ToInt32(Math.Cos(angle) - 15*Math.Sin(angle));
-                    inductor[2].Y = inductor[0].Y + Convert.ToInt32(Math.Sin(angle) + 15*Math.Cos(angle));
-                    inductor[3].X = inductor[0].X + Convert.ToInt32(7*Math.Cos(angle) - 15*Math.Sin(angle));
-                    inductor[3].Y = inductor[0].Y + Convert.ToInt32(7*Math.Sin(angle) + 15*Math.Cos(angle));
-                    inductor[4].X = inductor[0].X + Convert.ToInt32(8*Math.Cos(angle));
-                    inductor[4].Y = inductor[0].Y + Convert.ToInt32(8*Math.Sin(angle));
-                    screen.DrawBezier(pmidpen, inductor[0], inductor[2], inductor[3], inductor[4]);
-                    for (i = 0; i < 3; i++)
-                    {
-                        //shift 8 pixel
-                        inductor[0].X += Convert.ToInt32(8 * Math.Cos(angle));
-                        inductor[0].Y += Convert.ToInt32(8 * Math.Sin(angle));
-                        inductor[2].X += Convert.ToInt32(8 * Math.Cos(angle));
-                        inductor[2].Y += Convert.ToInt32(8 * Math.Sin(angle));
-                        inductor[3].X += Convert.ToInt32(8 * Math.Cos(angle));
-                        inductor[3].Y += Convert.ToInt32(8 * Math.Sin(angle));
-                        inductor[4].X += Convert.ToInt32(8 * Math.Cos(angle));
-                        inductor[4].Y += Convert.ToInt32(8 * Math.Sin(angle));
-                        screen.DrawBezier(pmidpen, inductor[0], inductor[2], inductor[3], inductor[4]);
-                    }
-                }
-            }
-            //end of inductor drawing
-            */
+                                //inductor[5] is the start point of the mount
+                                //draw the first mount
+                                inductor[2].X = inductor[0].X + Convert.ToInt32(Math.Cos(angle) - 15*Math.Sin(angle));
+                                inductor[2].Y = inductor[0].Y + Convert.ToInt32(Math.Sin(angle) + 15*Math.Cos(angle));
+                                inductor[3].X = inductor[0].X + Convert.ToInt32(7*Math.Cos(angle) - 15*Math.Sin(angle));
+                                inductor[3].Y = inductor[0].Y + Convert.ToInt32(7*Math.Sin(angle) + 15*Math.Cos(angle));
+                                inductor[4].X = inductor[0].X + Convert.ToInt32(8*Math.Cos(angle));
+                                inductor[4].Y = inductor[0].Y + Convert.ToInt32(8*Math.Sin(angle));
+                                screen.DrawBezier(pmidpen, inductor[0], inductor[2], inductor[3], inductor[4]);
+                                for (i = 0; i < 3; i++)
+                                {
+                                    //shift 8 pixel
+                                    inductor[0].X += Convert.ToInt32(8 * Math.Cos(angle));
+                                    inductor[0].Y += Convert.ToInt32(8 * Math.Sin(angle));
+                                    inductor[2].X += Convert.ToInt32(8 * Math.Cos(angle));
+                                    inductor[2].Y += Convert.ToInt32(8 * Math.Sin(angle));
+                                    inductor[3].X += Convert.ToInt32(8 * Math.Cos(angle));
+                                    inductor[3].Y += Convert.ToInt32(8 * Math.Sin(angle));
+                                    inductor[4].X += Convert.ToInt32(8 * Math.Cos(angle));
+                                    inductor[4].Y += Convert.ToInt32(8 * Math.Sin(angle));
+                                    screen.DrawBezier(pmidpen, inductor[0], inductor[2], inductor[3], inductor[4]);
+                                }
+                            }
+                        }
+                        //end of inductor drawing
+                        */
 
             //draw voltage
             if (type == 'v')
@@ -730,11 +743,11 @@ namespace Spice
                         voltterminal[5].Y = midpoint.Y + 8;
                         screen.DrawLine(p1pen, voltterminal[4], voltterminal[5]);
                     }
-                    
+
                 }
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                 {
-   
+
                     voltterminal[0].X = midpoint.X - Convert.ToInt32(8 * Math.Cos(angle));
                     voltterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
@@ -759,7 +772,7 @@ namespace Spice
             }
             //end voltage
 
-  
+
 
 
             //draw ground 
@@ -791,7 +804,7 @@ namespace Spice
             if (type != 'w' && type != 'g') screen.DrawString(type.ToString() + characteristic.ToString(), new Font("Arial", 16), new SolidBrush(myPen.Color), midpoint + new Size(10, 0));
         }
 
- 
+
         public void setCurrent(int x, double c)
         {
             if (type != 'g') current = c;
@@ -815,7 +828,7 @@ namespace Spice
         public bool bound;
         public bool checkBound(Point mouse)
         {
-            
+
             Rectangle r = new Rectangle((pt1.X + pt2.X) / 2 - 5, (pt1.Y + pt2.Y) / 2 - 5, 10, 10);
             if (r.Contains(mouse))
             {
