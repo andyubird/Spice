@@ -137,7 +137,7 @@ namespace Spice
             if (!gotGround && volt != null)
             {
                 CircuitNode cn = new CircuitNode();
-                Point pt = volt.pt1;
+                Point pt = volt.pt2;
                 cn.x = pt.X;
                 cn.y = pt.Y;
                 nodeList.Add(cn);
