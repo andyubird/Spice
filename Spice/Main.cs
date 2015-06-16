@@ -94,11 +94,11 @@ namespace Spice
                 textBox1.Text += elm.getCurrent().ToString() + " ";
             }
 
-            if (iScope != null && vScope !=null)
+            if (iScope != null && vScope != null)
             {
-                iScope.step(0);
+                iScope.step(1);
                 iScope.draw(screen);
-                vScope.step(1);
+                vScope.step(0);
                 vScope.draw(screen);
             }
         }

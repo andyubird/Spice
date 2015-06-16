@@ -26,13 +26,14 @@ namespace Spice
         public void step(int type)
         {
             if (elm == null) return;
+            if (elm.type == 'g') return;
 
             if (type == 0)
             {
-                if (elm.voltdiff > max) max = elm.voltdiff + 1e-8;
-                if (elm.voltdiff < min) min = elm.voltdiff;
+                if (elm.volts[0] - elm.volts[1] > max) max = elm.volts[0] - elm.volts[1] + 1e-8;
+                if (elm.volts[0] - elm.volts[1] < min) min = elm.volts[0] - elm.volts[1];
 
-                data.Insert(0, elm.voltdiff);
+                data.Insert(0, elm.volts[0] - elm.volts[1]);
                 data.RemoveAt(area.Width);
 
                 return;
@@ -52,6 +53,7 @@ namespace Spice
         public void draw(Graphics screen)
         {
             if (elm == null) return;
+            if (elm.type == 'g') return;
 
             for (int i = 0; i < area.Width - 1; i++)
             {

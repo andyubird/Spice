@@ -78,12 +78,12 @@ namespace Spice
         {
             volts[n] = c;
             calculateCurrent();
-            voltdiff = volts[0] - volts[1];
+            if (type == 'C') voltdiff = volts[0] - volts[1];
         }
 
         public void stamp(Main sim)
         {
-            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, characteristic);
+            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, -characteristic);
             if (type == 'w') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
             if (type == 'g') sim.stampVoltageSource(0, nodes[0], voltSource, 0);
             if (type == 'r') sim.stampResistor(nodes[0], nodes[1], characteristic);
@@ -105,10 +105,9 @@ namespace Spice
         void calculateCurrent()
         {
             if (type == 'r') current = (volts[0] - volts[1]) / characteristic;
-            voltdiff = volts[0] - volts[1];
             if (type == 'C')
             {
-                voltdiff = volts[0] - volts[1];
+                double voltdiff = volts[0] - volts[1];
                 // we check compResistance because this might get called
                 // before stamp(), which sets compResistance, causing
                 // infinite current
