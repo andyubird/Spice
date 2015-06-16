@@ -9,7 +9,8 @@ namespace Spice
     
     public class CircuitElm
     {
-        static int voltrange = 5;
+        
+        
         private int roundto(int a, int b)
         {
             int forward = b;
@@ -43,6 +44,7 @@ namespace Spice
 
         public Pen myPen = new Pen(Color.DarkGray, 2);
 
+       
         public Point pt1;
         public Point pt2;
 
@@ -152,11 +154,31 @@ namespace Spice
             pt2.X = roundto(a, pt2.X);
             pt2.Y = roundto(a, pt2.Y);
         }
-
+        static int voltrange = 5;
+        
         public void draw(Graphics screen)
         {
+            Pen p1pen;
+            Pen pmidpen;
+            Pen p2pen;
 
+                if (bound == true)
+                {
+                    p1pen = new Pen(Color.Yellow, 2);
+                    pmidpen = new Pen(Color.Yellow, 2);
+                    p2pen = new Pen(Color.Yellow, 2);
+                }
+                else
+                {
+                    //p2pen = new Pen(Color.FromArgb(127 + (int)volts[0] * 128 / voltrange, 127 - (int)volts[0] * 127 / voltrange, 127 + (int)volts[0] * 128 / voltrange), 2);
+                   // pmidpen = new Pen(Color.FromArgb(127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange), 127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange), 127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange)), 2);
+                    //p1pen = new Pen(Color.FromArgb(127 + (int)volts[1] * 128 / voltrange, 127 - (int)volts[1] * 127 / voltrange, 127 + (int)volts[1] * 128 / voltrange), 2);
 
+                   
+                    p2pen = new Pen(Color.FromArgb(127 - (int)volts[0] * 127 / voltrange, 127 +(int)volts[0] * 128 / voltrange, 127 - (int)volts[0] * 127 / voltrange), 2);
+                    pmidpen = new Pen(Color.FromArgb(127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange), 127 + (int)(volts[0] + volts[1]) * 128 / (2 * voltrange), 127 - (int)(volts[0] + volts[1]) * 127 / (2 * voltrange)), 2);
+                    p1pen = new Pen(Color.FromArgb(127 - (int)volts[1] * 127 / voltrange, 127 + (int)volts[1] * 128 / voltrange, 127 - (int)volts[1] * 127 / voltrange), 2);
+                }
             Point midpoint = new Point((pt1.X + pt2.X) / 2, (pt1.Y + pt2.Y) / 2);
             Point[] turnpt = new Point[17];
             int i;
@@ -173,7 +195,7 @@ namespace Spice
             if (type == 'r')
             {
                 if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
-                    screen.DrawLine(myPen, pt1, pt2);
+                    screen.DrawLine(pmidpen, pt1, pt2);
                 if ((pt1.X != pt2.X) && (pt1.Y != pt2.Y))
                 {
                     //設定第0個轉折點
@@ -213,10 +235,10 @@ namespace Spice
                         }//end switch
 
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(p1pen, pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(p2pen, turnpt[16], pt2);
                 }
 
 
@@ -256,10 +278,10 @@ namespace Spice
                         }//end switch
                         
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(p1pen, pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(p2pen, turnpt[16], pt2);
                 }//end if
                 if ((pt1.X != pt2.X) && (pt1.Y == pt2.Y))
                 {
@@ -297,10 +319,10 @@ namespace Spice
                         }//end switch
 
                     }//end for
-                    screen.DrawLine(myPen, pt1, turnpt[0]);
+                    screen.DrawLine(p1pen, pt1, turnpt[0]);
                     for (i = 0; i < 16; i++)
-                        screen.DrawLine(myPen, turnpt[i], turnpt[i + 1]);
-                    screen.DrawLine(myPen, turnpt[16], pt2);
+                        screen.DrawLine(pmidpen, turnpt[i], turnpt[i + 1]);
+                    screen.DrawLine(p2pen, turnpt[16], pt2);
                 }//end if
             }
             //end resistor
@@ -436,20 +458,20 @@ namespace Spice
                         voltterminal[0].Y = midpoint.Y;
                         voltterminal[1].X = midpoint.X + 8;
                         voltterminal[1].Y = midpoint.Y;
-                        screen.DrawLine(myPen, voltterminal[1], pt1);
-                        screen.DrawLine(myPen, pt2, voltterminal[0]);
+                        screen.DrawLine(p1pen, voltterminal[1], pt1);
+                        screen.DrawLine(p2pen, pt2, voltterminal[0]);
                         //the negative pole(-)
                         voltterminal[2].X = midpoint.X - 8;
                         voltterminal[2].Y = midpoint.Y + 4;
                         voltterminal[3].X = midpoint.X - 8;
                         voltterminal[3].Y = midpoint.Y - 4;
-                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        screen.DrawLine(p2pen, voltterminal[2], voltterminal[3]);
                         //the positive pole(+)
                         voltterminal[4].X = midpoint.X + 8;
                         voltterminal[4].Y = midpoint.Y + 8;
                         voltterminal[5].X = midpoint.X + 8;
                         voltterminal[5].Y = midpoint.Y - 8;
-                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                        screen.DrawLine(p1pen, voltterminal[4], voltterminal[5]);
 
                     }
                     if (pt1.X < pt2.X)
@@ -458,20 +480,20 @@ namespace Spice
                         voltterminal[0].Y = midpoint.Y;
                         voltterminal[1].X = midpoint.X + 8;
                         voltterminal[1].Y = midpoint.Y;
-                        screen.DrawLine(myPen, voltterminal[1], pt2);
-                        screen.DrawLine(myPen, pt1, voltterminal[0]);
+                        screen.DrawLine(p2pen, voltterminal[1], pt2);
+                        screen.DrawLine(p1pen, pt1, voltterminal[0]);
                         //the negative pole(-)
                         voltterminal[2].X = midpoint.X + 8;
                         voltterminal[2].Y = midpoint.Y + 4;
                         voltterminal[3].X = midpoint.X + 8;
                         voltterminal[3].Y = midpoint.Y - 4;
-                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        screen.DrawLine(p2pen, voltterminal[2], voltterminal[3]);
                         //the positive pole(+)
                         voltterminal[4].X = midpoint.X - 8;
                         voltterminal[4].Y = midpoint.Y + 8;
                         voltterminal[5].X = midpoint.X - 8;
                         voltterminal[5].Y = midpoint.Y - 8;
-                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                        screen.DrawLine(p1pen, voltterminal[4], voltterminal[5]);
                     }
                 }
                 //when the line is vertical
@@ -483,20 +505,20 @@ namespace Spice
                         voltterminal[0].Y = midpoint.Y - 8;
                         voltterminal[1].X = midpoint.X;
                         voltterminal[1].Y = midpoint.Y + 8;
-                        screen.DrawLine(myPen, voltterminal[1], pt2);
-                        screen.DrawLine(myPen, pt1, voltterminal[0]);
+                        screen.DrawLine(p2pen, voltterminal[1], pt2);
+                        screen.DrawLine(p1pen, pt1, voltterminal[0]);
                         //the negative pole(-)
                         voltterminal[2].X = midpoint.X + 4;
                         voltterminal[2].Y = midpoint.Y + 8;
                         voltterminal[3].X = midpoint.X - 4;
                         voltterminal[3].Y = midpoint.Y + 8;
-                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        screen.DrawLine(p2pen, voltterminal[2], voltterminal[3]);
                         //the positive pole(+)
                         voltterminal[4].X = midpoint.X + 8;
                         voltterminal[4].Y = midpoint.Y - 8;
                         voltterminal[5].X = midpoint.X - 8;
                         voltterminal[5].Y = midpoint.Y - 8;
-                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                        screen.DrawLine(p1pen, voltterminal[4], voltterminal[5]);
                     }
                     if (pt1.Y > pt2.Y)
                     {
@@ -504,20 +526,20 @@ namespace Spice
                         voltterminal[0].Y = midpoint.Y - 8;
                         voltterminal[1].X = midpoint.X;
                         voltterminal[1].Y = midpoint.Y + 8;
-                        screen.DrawLine(myPen, voltterminal[1], pt1);
-                        screen.DrawLine(myPen, pt2, voltterminal[0]);
+                        screen.DrawLine(p1pen, voltterminal[1], pt1);
+                        screen.DrawLine(p2pen, pt2, voltterminal[0]);
                         //the negative pole(-)
                         voltterminal[2].X = midpoint.X + 4;
                         voltterminal[2].Y = midpoint.Y - 8;
                         voltterminal[3].X = midpoint.X - 4;
                         voltterminal[3].Y = midpoint.Y - 8;
-                        screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                        screen.DrawLine(p2pen, voltterminal[2], voltterminal[3]);
                         //the positive pole(+)
                         voltterminal[4].X = midpoint.X + 8;
                         voltterminal[4].Y = midpoint.Y + 8;
                         voltterminal[5].X = midpoint.X - 8;
                         voltterminal[5].Y = midpoint.Y + 8;
-                        screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                        screen.DrawLine(p1pen, voltterminal[4], voltterminal[5]);
                     }
                     
                 }
@@ -528,23 +550,23 @@ namespace Spice
                     voltterminal[0].Y = midpoint.Y - Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[1].X = midpoint.X + Convert.ToInt32(8 * Math.Cos(angle));
                     voltterminal[1].Y = midpoint.Y + Convert.ToInt32(8 * Math.Sin(angle));
-                    screen.DrawLine(myPen, voltterminal[1], pt2);
-                    screen.DrawLine(myPen, pt1, voltterminal[0]);
+                    screen.DrawLine(p1pen, voltterminal[1], pt2);
+                    screen.DrawLine(p2pen, pt1, voltterminal[0]);
                     //the positive pole(+)
                     voltterminal[2].X = voltterminal[0].X - Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[2].Y = voltterminal[0].Y + Convert.ToInt32(8 * Math.Cos(angle));
                     voltterminal[3].X = voltterminal[0].X + Convert.ToInt32(8 * Math.Sin(angle));
                     voltterminal[3].Y = voltterminal[0].Y - Convert.ToInt32(8 * Math.Cos(angle));
-                    screen.DrawLine(myPen, voltterminal[2], voltterminal[3]);
+                    screen.DrawLine(p1pen, voltterminal[2], voltterminal[3]);
                     //the negative pole(-)
                     voltterminal[4].X = voltterminal[1].X - Convert.ToInt32(4 * Math.Sin(angle));
                     voltterminal[4].Y = voltterminal[1].Y + Convert.ToInt32(4 * Math.Cos(angle));
                     voltterminal[5].X = voltterminal[1].X + Convert.ToInt32(4 * Math.Sin(angle));
                     voltterminal[5].Y = voltterminal[1].Y - Convert.ToInt32(4 * Math.Cos(angle));
-                    screen.DrawLine(myPen, voltterminal[4], voltterminal[5]);
+                    screen.DrawLine(p2pen, voltterminal[4], voltterminal[5]);
                 }
                 if ((pt1.X == pt2.X) && (pt1.Y == pt2.Y))
-                    screen.DrawLine(myPen, pt1, pt2);
+                    screen.DrawLine(p1pen, pt1, pt2);
             }
             //end voltage
 
@@ -599,18 +621,21 @@ namespace Spice
                 sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue);
             }
         }
-
+        public bool bound;
         public bool checkBound(Point mouse)
         {
+            
             Rectangle r = new Rectangle((pt1.X + pt2.X) / 2 - 5, (pt1.Y + pt2.Y) / 2 - 5, 10, 10);
             if (r.Contains(mouse))
             {
                 myPen.Color = Color.Yellow;
+                bound = true;
                 return true;
             }
             else
             {
                 myPen.Color = Color.DarkGray;
+                bound = false;
                 return false;
             }
         }
