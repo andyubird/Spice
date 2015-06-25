@@ -68,9 +68,9 @@ namespace Spice
             }
 
             
-            screen.DrawString(max.ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, 0));
-            screen.DrawString(data[0].ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height/2 - 7));
-            screen.DrawString(min.ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height - 15));
+            screen.DrawString(max.ToString("f4"), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, 0));
+            screen.DrawString(data[0].ToString("f4"), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height / 2 - 7));
+            screen.DrawString(min.ToString("f4"), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height - 15));
         }
     }
 }
