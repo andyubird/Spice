@@ -85,13 +85,44 @@ namespace Spice
                 screen.DrawString(stopMessage, new Font("Arial", 16), new SolidBrush(myPen.Color), new Point(100, 500));
             }
 
-            runCircuit();
+            if (!stoppedToolStripMenuItem.Checked) runCircuit();
 
-            textBox1.Text = "";
+            if (!stoppedToolStripMenuItem.Checked)
+            {
+                long sysTime = Environment.TickCount;
+                if (lastTime != 0)
+                {
+                    int inc = (int)(sysTime - lastTime);
+                    //double c = currentBar.getValue();
+                    //c = java.lang.Math.exp(c / 3.5 - 14.2);
+                    //CircuitElm.currentMult = 1.7 * inc * c;
+                }
+                if (sysTime - secTime >= 1000)
+                {
+                    framerate = frames; steprate = steps;
+                    frames = 0; steps = 0;
+                    secTime = sysTime;
+                }
+                lastTime = sysTime;
+            }
+            else
+                lastTime = 0;
+
+            textBox1.Text = "Currents:" + Environment.NewLine;
 
             foreach (CircuitElm elm in elmList)
             {
-                textBox1.Text += elm.getCurrent().ToString() + " ";
+                textBox1.Text += Math.Abs(elm.getCurrent()).ToString() + Environment.NewLine;
+            }
+
+            textBox1.Text += "Volts:" + Environment.NewLine;
+
+            foreach (CircuitElm elm in elmList)
+            {
+                if (elm.type != 'g')
+                    textBox1.Text += Math.Abs(elm.volts[0] - elm.volts[1]).ToString() + Environment.NewLine;
+                else
+                    textBox1.Text += Math.Abs(elm.volts[0]).ToString() + Environment.NewLine;
             }
 
             if (iScope != null && vScope != null)
@@ -1124,8 +1155,8 @@ namespace Spice
                     {
                         if ((ModifierKeys & Keys.Control) == Keys.Control)
                         {
-                            vScope = new Scope(elmList[i], new Rectangle(40, 400, 500, 50));
-                            iScope = new Scope(elmList[i], new Rectangle(40, 470, 500, 50));
+                            vScope = new Scope(elmList[i], new Rectangle(50, 350, 700, 70));
+                            iScope = new Scope(elmList[i], new Rectangle(50, 450, 700, 70));
                         }
                         else
                         {
@@ -1180,7 +1211,7 @@ namespace Spice
             }
             else
             {
-                toolStripStatusLabel1.Text = PointToClient(System.Windows.Forms.Cursor.Position).ToString() + elmList.Count.ToString();
+                toolStripStatusLabel1.Text = PointToClient(System.Windows.Forms.Cursor.Position).ToString();
             }
 
             for (int i = 0; i < elmList.Count; i++)
@@ -1224,6 +1255,12 @@ namespace Spice
         {
             tool = 'C';
             toolStripStatusLabel3.Text = "Capacitor";
+        }
+
+        private void inductorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'i';
+            toolStripStatusLabel3.Text = "Inductor";
         }
 
         #endregion
@@ -1293,11 +1330,6 @@ namespace Spice
         }
 
         #endregion
-
-        private void stopToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            stopToolStripMenuItem.Checked = !stopToolStripMenuItem.Checked;
-        }
 
         bool lu_factor(double[][] a, int n, int[] ipvt)
         {
@@ -1433,9 +1465,8 @@ namespace Spice
             circuitMatrix = null;
             stopElm = ce;
             Debug.WriteLine(s);
-            stopToolStripMenuItem.Checked = true;
+            stoppedToolStripMenuItem.Checked = true;
             analyzeFlag = false;
-            //cv.repaint();
         }
 
         class FindPathInfo
@@ -1552,5 +1583,30 @@ namespace Spice
                 return false;
             }
         }
+
+        private void stoppedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            stoppedToolStripMenuItem.Checked = !stoppedToolStripMenuItem.Checked;
+        }
+
+        private void debugModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            debugModeToolStripMenuItem.Checked = !debugModeToolStripMenuItem.Checked;
+            textBox1.Visible = debugModeToolStripMenuItem.Checked;
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Hi!", "About");
+        }
+
+        private void resetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (CircuitElm elm in elmList) elm.reset();
+            needAnalyze();
+            t = 0;
+        }
+
+
     }
 }
