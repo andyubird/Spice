@@ -47,7 +47,7 @@ namespace Spice
                 data.RemoveAt(area.Width);
             }
 
-            
+
         }
 
         public void draw(Graphics screen)
@@ -55,17 +55,22 @@ namespace Spice
             if (elm == null) return;
             if (elm.type == 'g') return;
 
+            screen.DrawLine(new Pen(Color.Aqua), area.X, area.Y + area.Height, area.X + area.Width, area.Y + area.Height);
+            screen.DrawLine(new Pen(Color.Aqua), area.X + area.Width, area.Y, area.X + area.Width, area.Y + area.Height);
+
             for (int i = 0; i < area.Width - 1; i++)
             {
-                screen.DrawLine(new Pen(Color.Aqua),
-                    area.X + i,
+                screen.DrawLine(new Pen(Color.Yellow),
+                    area.X - i + area.Width,
                     area.Y + area.Height - (int)(area.Height * (data[i] - min) / (max - min)),
-                    area.X + i + 1,
+                    area.X - i - 1 + area.Width,
                     area.Y + area.Height - (int)(area.Height * (data[i + 1] - min) / (max - min)));
             }
 
-            screen.DrawString(max.ToString(), new Font("Arial", 16), new SolidBrush(Color.Aqua), area.Location);
-            screen.DrawString(min.ToString(), new Font("Arial", 16), new SolidBrush(Color.Aqua), area.Location + new Size(0,area.Height));
+            
+            screen.DrawString(max.ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, 0));
+            screen.DrawString(data[0].ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height/2 - 7));
+            screen.DrawString(min.ToString(), new Font("SansSerif", 10), new SolidBrush(Color.Aqua), area.Location + new Size(area.Width, area.Height - 15));
         }
     }
 }
