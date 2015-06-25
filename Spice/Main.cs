@@ -332,20 +332,7 @@ namespace Spice
                 }
             }
 
-<<<<<<< HEAD
             for (i = 0; i != elmList.Count; i++)
-=======
-
-
-
-
-
-
-
-            textBox1.Text = "List of terminals:\r\n";
-
-            foreach (Terminal terminal in terminals)
->>>>>>> origin/master
             {
                 CircuitElm ce = elmList[i];
                 // look for inductors with no current path
@@ -1298,21 +1285,12 @@ namespace Spice
 
             // 設定檔案
             FileStream outFile = new FileStream(myfile, FileMode.Create, FileAccess.Write);
-<<<<<<< HEAD
 
             // open File
             StreamWriter streamOut = new StreamWriter(outFile);
             // write File
             // for loop to save one by one
             for (int i = 0; i < elmList.Count; i++)
-=======
-            
-            // 開檔
-            StreamWriter streamOut = new StreamWriter(outFile);
-            // 寫檔
-
-            for (int i = 0; i < lines.Count; i++)
->>>>>>> origin/master
             {
                 streamOut.WriteLine(elmList[i].saveDump());
             }
@@ -1335,7 +1313,6 @@ namespace Spice
                 for (int i = 0; i < filelines.Length; i++)
                 {
                     string[] splitLines = filelines[i].Split(' ');
-<<<<<<< HEAD
                     // to check and construct constructor
                     // there're two constructor: one has 5 parameter and the other one has 6 parameter.
                     if (splitLines.Length == 5) { elmList.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]))); }
@@ -1522,11 +1499,7 @@ namespace Spice
                 {
                     //System.out.println("used " + n1);
                     return false;
-=======
 
-                    if (splitLines.Length == 5) { lines.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]))); }
-                    if (splitLines.Length == 6) { lines.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]), (float)Convert.ToDouble(splitLines[5]))); }
->>>>>>> origin/master
                 }
 
                 used[n1] = true;
