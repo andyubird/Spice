@@ -287,7 +287,7 @@
   <data name="dCVoltageSourceToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAFMAAABCCAIAAACkWn1pAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vwAADr8BOAVTJAAAAUVJREFUeF7t00EKwzAQQ9EcMPfMAXsAN5QvaMN0KY/BeruKAfMLOV5bGmOkfDMp
+        vgAADr4B6kKxwAAAAUVJREFUeF7t00EKwzAQQ9EcMPfMAXsAN5QvaMN0KY/BeruKAfMLOV5bGmOkfDMp
         30/K9zOp/BB+L2BGOdHC2i3lThQLa7eUO1EsrN1S7kSxsHZLuRPFwtot5U4UC+sfHPn/oLXKuRBWj5Q7
         0SGsFS6E1SPlTnQIa4ULYfVIuRMdwlrhQlg9Uu5Eh7BWuBBWj5Q70SGsFS4MeODLs5xDJ16qcOHBG/JT
         zokZj1W48Liui2c+Nio/z5NnPnYp54EvS3/nrB7Pcgc6hLXChbB6pNyJDmGtcCGsHil3okNYK1wIq0fK
@@ -734,7 +734,7 @@
   <data name="openToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wQAADsEBuJFr7QAAA85JREFUSEu1lutPU2ccx/0bZhb3wk0hOrME2cRlAykIwlTAbkw278A2l/mOmL0x
+        wAAADsABataJCQAAA85JREFUSEu1lutPU2ccx/0bZhb3wk0hOrME2cRlAykIwlTAbkw278A2l/mOmL0x
         +sLMxAV1ISMkdUhYJ8uW7pJtXgpSUEoBKTcREOwohbIivVBK6Y1eTtuvz/OU0xZO3U39Jp80Oefk9zm/
         b09PugbPOf9JEAqH0DpxC6eaKrC3XoT8ugzsk+7Cudtn8NA8unxVJN+oq9nnvxb8PvITsi9vx8bKFxKS
         fGEtKpVfsJugw+kxmn8UzLvnUCYrEQyM59XqdUipXY/NX69DoTSHfdLjNGs6pGLcOP9KQq5KRMirfQsn

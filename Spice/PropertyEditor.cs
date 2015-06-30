@@ -28,8 +28,25 @@ namespace Spice
                 Controls.Add(r);
 
                 r.TextChanged += delegate
-                { if(r.Text!=String.Empty) elm.characteristic = (float)Convert.ToDouble(r.Text); };
+                { if (r.Text != String.Empty) elm.characteristic = (float)Convert.ToDouble(r.Text); };
             }
+        }
+
+        public PropertyEditor(CircuitElm elm, int a)
+        {
+            InitializeComponent();
+
+            if (elm.type != 'v') return;
+
+
+            TextBox r = new TextBox();
+            r.SetBounds(20, 15, 110, 50);
+            r.Text = elm.frequency.ToString();
+            Controls.Add(r);
+
+            r.TextChanged += delegate
+            { if (r.Text != String.Empty) elm.frequency = Convert.ToDouble(r.Text); };
+
         }
     }
 }

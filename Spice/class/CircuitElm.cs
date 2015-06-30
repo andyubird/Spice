@@ -42,6 +42,14 @@ namespace Spice
 
         public int[] terminals = new int[2];
 
+        public double frequency = 4000;
+
+        public bool isSquare = false;
+
+        public double dutyCycle = 0.5;
+
+        public double freqTimeZero = 0;
+
         public Pen myPen = new Pen(Color.DarkGray, 2);
 
 
@@ -76,6 +84,7 @@ namespace Spice
                 volts[i] = 0;
             curcount = 0;
             current = 0;
+            freqTimeZero = 0;
         }
 
         public void setNodeVoltage(int n, double c)
@@ -85,9 +94,17 @@ namespace Spice
             if (type == 'C') voltdiff = volts[0] - volts[1];
         }
 
+        public double getVoltage(Main sim)
+        {
+            double w = 2 * Math.PI * (sim.t - freqTimeZero) * frequency;
+            if (isSquare == true) return ((w % (2 * Math.PI) > (2 * Math.PI * dutyCycle)) ? -characteristic : characteristic);
+            return characteristic;
+        }
+
         public void stamp(Main sim)
         {
-            if (type == 'v') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, -characteristic);
+            if (type == 'v' && isSquare == false) sim.stampVoltageSource(nodes[0], nodes[1], voltSource, -getVoltage(sim));
+            if (type == 'v' && isSquare == true) sim.stampVoltageSource(nodes[0], nodes[1], voltSource);
             if (type == 'w') sim.stampVoltageSource(nodes[0], nodes[1], voltSource, 0);
             if (type == 'g') sim.stampVoltageSource(0, nodes[0], voltSource, 0);
             if (type == 'r') sim.stampResistor(nodes[0], nodes[1], characteristic);
@@ -148,11 +165,34 @@ namespace Spice
             allocNodes();
         }
 
+        public CircuitElm(char tool, int x1, int y1, int x2, int y2, float chara, double freq)
+        {
+            type = tool;
+            pt1.X = x1;
+            pt1.Y = y1;
+            pt2.X = x2;
+            pt2.Y = y2;
+            characteristic = chara;
+            isSquare = true;
+            frequency = freq;
+            allocNodes();
+        }
+
         public CircuitElm(char tool, Point a, Point b)
         {
             type = tool;
             pt1 = a;
             pt2 = b;
+            allocNodes();
+        }
+
+        public CircuitElm(char tool, Point a, Point b, double freq)
+        {
+            type = tool;
+            pt1 = a;
+            pt2 = b;
+            isSquare = true;
+            frequency = freq;
             allocNodes();
         }
 
@@ -829,6 +869,7 @@ namespace Spice
 
         public void doStep(Main sim)
         {
+            if (type == 'v' && isSquare == true) sim.updateVoltageSource(nodes[0], nodes[1], voltSource, getVoltage(sim));
             if (type == 'C') sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue);
             if (type == 'i') sim.stampCurrentSource(nodes[0], nodes[1], curSourceValue);
         }
@@ -862,10 +903,11 @@ namespace Spice
 
         public string saveDump()
         {
-            if (type != 'w' && type != 'g')
+            if (type != 'w' && type != 'g' && isSquare != true)
             {
                 return type.ToString() + " " + pt1.X.ToString() + " " + pt1.Y.ToString() + " " + pt2.X.ToString() + " " + pt2.Y.ToString() + " " + characteristic.ToString();
             }
+            if (isSquare == true) return type.ToString() + " " + pt1.X.ToString() + " " + pt1.Y.ToString() + " " + pt2.X.ToString() + " " + pt2.Y.ToString() + " " + characteristic.ToString() + " " + frequency.ToString();
             return type.ToString() + " " + pt1.X.ToString() + " " + pt1.Y.ToString() + " " + pt2.X.ToString() + " " + pt2.Y.ToString();
         }
     }

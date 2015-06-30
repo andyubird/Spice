@@ -37,6 +37,7 @@
             this.dCVoltageSourceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.capacitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.inductorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,14 +48,14 @@
             this.optionsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.stoppedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.Frametime = new System.Windows.Forms.Timer(this.components);
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.inductorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.squareWaveGenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -81,7 +82,8 @@
             this.dCVoltageSourceToolStripMenuItem,
             this.groundToolStripMenuItem,
             this.capacitorToolStripMenuItem,
-            this.inductorToolStripMenuItem});
+            this.inductorToolStripMenuItem,
+            this.squareWaveGenToolStripMenuItem});
             this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
             this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
@@ -128,6 +130,13 @@
             this.capacitorToolStripMenuItem.Text = "Capacitor";
             this.capacitorToolStripMenuItem.Click += new System.EventHandler(this.capacitorToolStripMenuItem_Click);
             // 
+            // inductorToolStripMenuItem
+            // 
+            this.inductorToolStripMenuItem.Name = "inductorToolStripMenuItem";
+            this.inductorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.inductorToolStripMenuItem.Text = "Inductor";
+            this.inductorToolStripMenuItem.Click += new System.EventHandler(this.inductorToolStripMenuItem_Click);
+            // 
             // filesToolStripMenuItem
             // 
             this.filesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -167,8 +176,9 @@
             // 
             this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -203,7 +213,7 @@
             // stoppedToolStripMenuItem
             // 
             this.stoppedToolStripMenuItem.Name = "stoppedToolStripMenuItem";
-            this.stoppedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.stoppedToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.stoppedToolStripMenuItem.Text = "Stopped";
             this.stoppedToolStripMenuItem.Click += new System.EventHandler(this.stoppedToolStripMenuItem_Click);
             // 
@@ -212,9 +222,16 @@
             this.debugModeToolStripMenuItem.Checked = true;
             this.debugModeToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.debugModeToolStripMenuItem.Name = "debugModeToolStripMenuItem";
-            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.debugModeToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.debugModeToolStripMenuItem.Text = "Debug mode";
             this.debugModeToolStripMenuItem.Click += new System.EventHandler(this.debugModeToolStripMenuItem_Click);
+            // 
+            // resetToolStripMenuItem
+            // 
+            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            this.resetToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.resetToolStripMenuItem.Text = "Reset";
+            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -236,7 +253,7 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(733, 17);
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(851, 17);
             this.toolStripStatusLabel2.Spring = true;
             this.toolStripStatusLabel2.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 
@@ -260,19 +277,12 @@
             this.textBox1.Size = new System.Drawing.Size(152, 461);
             this.textBox1.TabIndex = 3;
             // 
-            // inductorToolStripMenuItem
+            // squareWaveGenToolStripMenuItem
             // 
-            this.inductorToolStripMenuItem.Name = "inductorToolStripMenuItem";
-            this.inductorToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
-            this.inductorToolStripMenuItem.Text = "Inductor";
-            this.inductorToolStripMenuItem.Click += new System.EventHandler(this.inductorToolStripMenuItem_Click);
-            // 
-            // resetToolStripMenuItem
-            // 
-            this.resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            this.resetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.resetToolStripMenuItem.Text = "Reset";
-            this.resetToolStripMenuItem.Click += new System.EventHandler(this.resetToolStripMenuItem_Click);
+            this.squareWaveGenToolStripMenuItem.Name = "squareWaveGenToolStripMenuItem";
+            this.squareWaveGenToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
+            this.squareWaveGenToolStripMenuItem.Text = "Square Wave Gen.";
+            this.squareWaveGenToolStripMenuItem.Click += new System.EventHandler(this.squareWaveGenToolStripMenuItem_Click);
             // 
             // Main
             // 
@@ -330,6 +340,7 @@
         private System.Windows.Forms.ToolStripMenuItem debugModeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem inductorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem squareWaveGenToolStripMenuItem;
 
     }
 }

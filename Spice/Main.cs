@@ -31,6 +31,7 @@ namespace Spice
         double[] circuitRightSide, origRightSide;
         int circuitMatrixSize, circuitMatrixFullSize;
         RowInfo[] circuitRowInfo;
+        bool isSquare = false;
 
         Point temppoint;
         bool _mousePressed;
@@ -38,6 +39,8 @@ namespace Spice
         Scope vScope, iScope;
 
         char tool = 'w';
+
+        public double freqTimeZero = 0;
 
         public Main()
         {
@@ -1157,6 +1160,7 @@ namespace Spice
                         {
                             vScope = new Scope(elmList[i], new Rectangle(50, 350, 700, 70));
                             iScope = new Scope(elmList[i], new Rectangle(50, 450, 700, 70));
+                            return;
                         }
                         else
                         {
@@ -1168,8 +1172,18 @@ namespace Spice
                 }
                 temppoint = PointToClient(System.Windows.Forms.Cursor.Position);
                 _mousePressed = true;
-                elmList.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
-                elmList[elmList.Count - 1].round(gridSize);
+                if (isSquare == false)
+                {
+                    elmList.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position)));
+                    elmList[elmList.Count - 1].round(gridSize);
+                }
+                else
+                {
+                    stoppedToolStripMenuItem.Checked = true;
+                    elmList.Add(new CircuitElm(tool, temppoint, PointToClient(System.Windows.Forms.Cursor.Position), 4000));
+                    elmList[elmList.Count - 1].round(gridSize);
+                }
+
             }
             else if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
@@ -1177,6 +1191,13 @@ namespace Spice
                 {
                     if (elmList[i].checkBound(PointToClient(System.Windows.Forms.Cursor.Position)))
                     {
+                        if ((ModifierKeys & Keys.Control) == Keys.Control)
+                        {
+                            PropertyEditor pa = new PropertyEditor(elmList[i], 5);
+                            pa.ShowDialog();
+                            needAnalyze();
+                            return;
+                        }
                         PropertyEditor pe = new PropertyEditor(elmList[i]);
                         pe.ShowDialog();
                         needAnalyze();
@@ -1231,37 +1252,51 @@ namespace Spice
         {
             tool = 'w';
             toolStripStatusLabel3.Text = "Wire";
+            isSquare = false;
         }
 
         private void resistorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tool = 'r';
             toolStripStatusLabel3.Text = "Resistor";
+            isSquare = false;
         }
 
         private void dCVoltageSourceToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tool = 'v';
             toolStripStatusLabel3.Text = "DC Voltage Source";
+            isSquare = false;
         }
 
         private void groundToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tool = 'g';
             toolStripStatusLabel3.Text = "Ground";
+            isSquare = false;
         }
 
         private void capacitorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tool = 'C';
             toolStripStatusLabel3.Text = "Capacitor";
+            isSquare = false;
         }
 
         private void inductorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             tool = 'i';
             toolStripStatusLabel3.Text = "Inductor";
+            isSquare = false;
         }
+
+        private void squareWaveGenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tool = 'v';
+            isSquare = true;
+            toolStripStatusLabel3.Text = "Square wave generator";
+        }
+
 
         #endregion
 
@@ -1317,6 +1352,7 @@ namespace Spice
                     // there're two constructor: one has 5 parameter and the other one has 6 parameter.
                     if (splitLines.Length == 5) { elmList.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]))); }
                     if (splitLines.Length == 6) { elmList.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]), (float)Convert.ToDouble(splitLines[5]))); }
+                    if (splitLines.Length == 7) { elmList.Add(new CircuitElm(splitLines[0][0], Convert.ToInt32(splitLines[1]), Convert.ToInt32(splitLines[2]), Convert.ToInt32(splitLines[3]), Convert.ToInt32(splitLines[4]), (float)Convert.ToDouble(splitLines[5]), Convert.ToDouble(splitLines[6]))); }
                 }
 
                 needAnalyze();
@@ -1607,6 +1643,9 @@ namespace Spice
             t = 0;
         }
 
-
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
     }
 }
